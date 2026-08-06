@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>新規登録 - WikiHub</title>
+
+<link rel="stylesheet" href="css/login.css">
+
+</head>
+<body>
+
+<header>
+
+    <div class="logo">
+        🌐 WikiHub
+    </div>
+
+</header>
+
+<main>
+
+<div class="registerBox">
+
+<h1>アカウント作成</h1>
+
+<p class="subtitle">
+WikiHubへようこそ！
+</p>
+
+<!-- アイコン -->
+
+<div class="iconArea">
+
+<img
+id="iconPreview"
+src="images/default-user.png"
+alt="アイコン">
+
+<br>
+
+<input
+type="file"
+id="iconInput"
+accept="image/*,.gif">
+
+<p>プロフィールアイコン</p>
+
+</div>
+
+<!-- ユーザー名 -->
+
+<label>
+
+ユーザー名
+
+<input
+type="text"
+id="username"
+maxlength="20"
+placeholder="ユーザー名">
+
+</label>
+
+<!-- メール -->
+
+<label>
+
+メールアドレス
+
+<input
+type="email"
+id="email"
+placeholder="example@example.com">
+
+</label>
+
+<!-- パスワード -->
+
+<label>
+
+パスワード
+
+<input
+type="password"
+id="password">
+
+</label>
+
+<label>
+
+パスワード（確認）
+
+<input
+type="password"
+id="password2">
+
+</label>
+
+<!-- 表示名 -->
+
+<label>
+
+表示名（任意）
+
+<input
+type="text"
+id="displayName"
+maxlength="30">
+
+</label>
+
+<!-- 自己紹介 -->
+
+<label>
+
+自己紹介
+
+<textarea
+id="bio"
+rows="4"
+maxlength="300"></textarea>
+
+</label>
+
+<!-- バナー -->
+
+<label>
+
+プロフィールバナー
+
+<input
+type="file"
+id="bannerInput"
+accept="image/*">
+
+</label>
+
+<!-- 規約 -->
+
+<div class="terms">
+
+<input
+type="checkbox"
+id="agree">
+
+<label for="agree">
+
+利用規約に同意します
+
+</label>
+
+</div>
+
+<!-- ボタン -->
+
+<button id="createAccount">
+
+アカウントを作成
+
+</button>
+
+<hr>
+
+<div class="links">
+
+<a href="login.html">
+
+すでにアカウントがあります
+
+</a>
+
+</div>
+
+</div>
+
+</main>
+
+<footer>
+
+WikiHub ©2026
+
+</footer>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
