@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>プロフィール - WikiHub</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<header id="topBar">
+
+<div class="logo">
+🌐 WikiHub
+</div>
+
+<div class="searchArea">
+
+<input
+type="text"
+placeholder="Wiki・記事を検索..."
+id="searchBox">
+
+<button>
+🔍
+</button>
+
+</div>
+
+<div class="accountArea">
+
+<button onclick="location.href='index.html'">
+ホーム
+</button>
+
+<button onclick="logout()">
+ログアウト
+</button>
+
+</div>
+
+</header>
+
+<main>
+
+<section id="center">
+
+<div class="welcome">
+
+<div style="text-align:center;">
+
+<img
+id="profileIcon"
+src="images/default-user.png"
+style="
+width:140px;
+height:140px;
+border-radius:50%;
+border:4px solid #36c;
+object-fit:cover;
+">
+
+<h1 id="displayName">
+
+ユーザー
+
+</h1>
+
+<p id="username">
+
+@username
+
+</p>
+
+</div>
+
+<hr>
+
+<h2>自己紹介</h2>
+
+<p id="bio">
+
+自己紹介がありません。
+
+</p>
+
+<hr>
+
+<h2>統計</h2>
+
+<ul>
+
+<li>記事作成数：<span id="articleCount">0</span></li>
+
+<li>編集回数：<span id="editCount">0</span></li>
+
+<li>参加日：<span id="createdDate">----</span></li>
+
+<li>権限：<span id="role">user</span></li>
+
+</ul>
+
+<hr>
+
+<h2>バッジ</h2>
+
+<div id="badgeArea">
+
+まだバッジがありません。
+
+</div>
+
+<hr>
+
+<button id="editProfile">
+
+プロフィール編集
+
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
