@@ -239,3 +239,115 @@ function createUUID(){
     return crypto.randomUUID();
 
 }
+/*=========================
+ ログイン
+=========================*/
+
+setupLogin();
+
+function setupLogin(){
+
+    const button=document.getElementById("loginButton");
+
+    if(!button)return;
+
+    button.addEventListener("click",login);
+
+}
+
+async function login(){
+
+    const username=
+    document.getElementById("loginUsername").value.trim();
+
+    const password=
+    document.getElementById("loginPassword").value;
+
+    const remember=
+    document.getElementById("rememberLogin").checked;
+
+    const user=findUser(username);
+
+    if(!user){
+
+        alert("ユーザーが見つかりません。");
+
+        return;
+
+    }
+
+    if(user.password!==password){
+
+        alert("パスワードが違います。");
+
+        return;
+
+    }
+
+    const session={
+
+        id:user.id,
+
+        username:user.username,
+
+        login:new Date().toISOString(),
+
+        remember:remember
+
+    };
+
+    localStorage.setItem(
+        "wikihub_session",
+        JSON.stringify(session)
+    );
+
+    alert("ログインしました！");
+
+    location.href="index.html";
+
+}
+
+/*=========================
+ ログアウト
+=========================*/
+
+function logout(){
+
+    localStorage.removeItem(
+        "wikihub_session"
+    );
+
+    location.href="login.html";
+
+}
+
+/*=========================
+ セッション取得
+=========================*/
+
+function getSession(){
+
+    const data=
+    localStorage.getItem(
+        "wikihub_session"
+    );
+
+    if(!data){
+
+        return null;
+
+    }
+
+    return JSON.parse(data);
+
+}
+
+/*=========================
+ ログイン確認
+=========================*/
+
+function isLogin(){
+
+    return getSession()!=null;
+
+}
