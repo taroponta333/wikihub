@@ -1,0 +1,410 @@
+/* ==========================
+   WikiHub Style
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Yu Gothic UI","Meiryo",sans-serif;
+    background:#f6f6f6;
+    color:#202122;
+}
+
+/* ==========================
+   Header
+========================== */
+
+#topBar{
+
+    height:65px;
+
+    background:#202122;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 20px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:999;
+
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
+
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+.logo span{
+
+    margin-left:8px;
+
+}
+
+.searchArea{
+
+    display:flex;
+
+    width:40%;
+
+}
+
+#searchBox{
+
+    flex:1;
+
+    padding:10px;
+
+    border:none;
+
+    border-radius:8px 0 0 8px;
+
+    font-size:16px;
+
+}
+
+#searchButton{
+
+    padding:10px 18px;
+
+    border:none;
+
+    cursor:pointer;
+
+    background:#36c;
+
+    color:white;
+
+    border-radius:0 8px 8px 0;
+
+    font-size:18px;
+
+}
+
+#searchButton:hover{
+
+    background:#447ff5;
+
+}
+
+.accountArea{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.accountArea button{
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    background:#36c;
+
+    color:white;
+
+    font-size:15px;
+
+}
+
+.accountArea button:hover{
+
+    background:#447ff5;
+
+}
+
+/* ==========================
+   Main Layout
+========================== */
+
+main{
+
+    display:grid;
+
+    grid-template-columns:240px 1fr 300px;
+
+    gap:20px;
+
+    padding:20px;
+
+}
+
+/* ==========================
+   Left Menu
+========================== */
+
+#leftMenu{
+
+    background:white;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    height:fit-content;
+
+}
+
+#leftMenu h2{
+
+    margin-bottom:15px;
+
+    color:#36c;
+
+}
+
+#leftMenu nav{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+#leftMenu a{
+
+    text-decoration:none;
+
+    color:#202122;
+
+    padding:10px;
+
+    border-radius:8px;
+
+    margin-bottom:5px;
+
+    transition:.2s;
+
+}
+
+#leftMenu a:hover{
+
+    background:#eaecf0;
+
+}
+
+/* ==========================
+   Center
+========================== */
+
+#center{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+.welcome,
+.wikiList,
+.recent{
+
+    background:white;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:10px;
+
+    padding:20px;
+
+}
+
+.welcome h1{
+
+    color:#36c;
+
+    margin-bottom:15px;
+
+}
+
+.wikiList h2,
+.recent h2{
+
+    margin-bottom:15px;
+
+}
+
+.wikiCard{
+
+    background:#f8f9fa;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    font-size:18px;
+
+}
+
+.wikiCard:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+
+}
+
+.recent ul{
+
+    margin-left:20px;
+
+}
+
+.recent li{
+
+    margin-bottom:10px;
+
+}
+
+/* ==========================
+   Right Menu
+========================== */
+
+#rightMenu{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+}
+
+.panel{
+
+    background:white;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:10px;
+
+    padding:15px;
+
+}
+
+.panel h2{
+
+    margin-bottom:12px;
+
+    color:#36c;
+
+}
+
+.panel li{
+
+    margin-bottom:8px;
+
+}
+
+/* ==========================
+   Footer
+========================== */
+
+footer{
+
+    margin-top:20px;
+
+    background:#202122;
+
+    color:white;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:1100px){
+
+main{
+
+grid-template-columns:220px 1fr;
+
+}
+
+#rightMenu{
+
+display:none;
+
+}
+
+}
+
+@media(max-width:800px){
+
+#topBar{
+
+flex-direction:column;
+
+height:auto;
+
+padding:15px;
+
+gap:15px;
+
+}
+
+.searchArea{
+
+width:100%;
+
+}
+
+main{
+
+grid-template-columns:1fr;
+
+}
+
+#leftMenu{
+
+order:2;
+
+}
+
+#center{
+
+order:1;
+
+}
+
+}
