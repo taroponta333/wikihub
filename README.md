@@ -1,1 +1,2 @@
-# wikihub
+# wikihubだよ〜
+自作のwikiをまとめるサイト
