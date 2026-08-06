@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>プロフィール編集 - WikiHub</title>
+
+<link rel="stylesheet" href="css/login.css">
+
+</head>
+<body>
+
+<header>
+
+<div class="logo">
+🌐 WikiHub
+</div>
+
+</header>
+
+<main>
+
+<div class="registerBox">
+
+<h1>プロフィール編集</h1>
+
+<div class="iconArea">
+
+<img
+id="iconPreview"
+src="images/default-user.png">
+
+<input
+type="file"
+id="iconInput"
+accept="image/*,.gif">
+
+<p>プロフィールアイコン</p>
+
+</div>
+
+<hr>
+
+<label>
+
+表示名
+
+<input
+type="text"
+id="displayName">
+
+</label>
+
+<label>
+
+メールアドレス
+
+<input
+type="email"
+id="email">
+
+</label>
+
+<label>
+
+自己紹介
+
+<textarea
+id="bio"
+rows="6"></textarea>
+
+</label>
+
+<label>
+
+プロフィールバナー
+
+<input
+type="file"
+id="bannerInput"
+accept="image/*">
+
+</label>
+
+<label>
+
+テーマ
+
+<select id="theme">
+
+<option value="light">
+
+ライト
+
+</option>
+
+<option value="dark">
+
+ダーク
+
+</option>
+
+<option value="blue">
+
+Wiki Blue
+
+</option>
+
+</select>
+
+</label>
+
+<hr>
+
+<button id="saveProfile">
+
+保存
+
+</button>
+
+<button
+id="cancelButton"
+style="margin-top:10px;background:#777;">
+
+キャンセル
+
+</button>
+
+</div>
+
+</main>
+
+<script src="js/auth.js"></script>
+
+</body>
+</html>
