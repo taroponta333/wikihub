@@ -410,3 +410,81 @@ function loadProfile(){
     }
 
 }
+/*=========================
+ プロフィール編集
+=========================*/
+
+setupProfileEditor();
+
+function setupProfileEditor(){
+
+    if(!document.getElementById("saveProfile")){
+
+        return;
+
+    }
+
+    const session=getSession();
+
+    if(!session){
+
+        return;
+
+    }
+
+    const user=findUser(session.username);
+
+    if(!user){
+
+        return;
+
+    }
+
+    document.getElementById("iconPreview").src=user.icon;
+
+    document.getElementById("displayName").value=user.displayName;
+
+    document.getElementById("email").value=user.email;
+
+    document.getElementById("bio").value=user.bio;
+
+    document.getElementById("theme").value=user.settings.theme;
+
+    setupIconPreview();
+
+    document
+    .getElementById("saveProfile")
+    .addEventListener("click",function(){
+
+        user.displayName=
+        document.getElementById("displayName").value;
+
+        user.email=
+        document.getElementById("email").value;
+
+        user.bio=
+        document.getElementById("bio").value;
+
+        user.icon=
+        document.getElementById("iconPreview").src;
+
+        user.settings.theme=
+        document.getElementById("theme").value;
+
+        saveUsers();
+
+        alert("保存しました！");
+
+        location.href="profile.html";
+
+    });
+
+    document
+    .getElementById("cancelButton")
+    .addEventListener("click",function(){
+
+        history.back();
+
+    });
+
+}
