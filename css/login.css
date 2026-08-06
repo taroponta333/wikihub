@@ -1,0 +1,316 @@
+/* ==========================================
+   WikiHub Register / Login Style
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:"Yu Gothic UI","Meiryo",sans-serif;
+
+    background:#f6f6f6;
+
+    color:#202122;
+
+}
+
+/* ===============================
+   Header
+================================ */
+
+header{
+
+    background:#202122;
+
+    color:white;
+
+    padding:18px 30px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.2);
+
+}
+
+.logo{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+/* ===============================
+   Main
+================================ */
+
+main{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:40px 20px;
+
+}
+
+/* ===============================
+   Register Box
+================================ */
+
+.registerBox{
+
+    width:100%;
+
+    max-width:700px;
+
+    background:white;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:14px;
+
+    padding:35px;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.registerBox h1{
+
+    color:#36c;
+
+    margin-bottom:8px;
+
+    font-size:34px;
+
+}
+
+.subtitle{
+
+    color:#666;
+
+    margin-bottom:25px;
+
+}
+
+/* ===============================
+   Icon
+================================ */
+
+.iconArea{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+#iconPreview{
+
+    width:140px;
+
+    height:140px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid #36c;
+
+    background:#ddd;
+
+    margin-bottom:10px;
+
+}
+
+.iconArea input{
+
+    margin:10px 0;
+
+}
+
+/* ===============================
+   Form
+================================ */
+
+label{
+
+    display:block;
+
+    margin-top:18px;
+
+    font-weight:bold;
+
+}
+
+input[type=text],
+input[type=email],
+input[type=password],
+textarea{
+
+    width:100%;
+
+    margin-top:8px;
+
+    padding:12px;
+
+    border:1px solid #a2a9b1;
+
+    border-radius:8px;
+
+    font-size:16px;
+
+    transition:.2s;
+
+}
+
+textarea{
+
+    resize:vertical;
+
+}
+
+input:focus,
+textarea:focus{
+
+    border-color:#36c;
+
+    outline:none;
+
+    box-shadow:0 0 6px rgba(51,102,204,.25);
+
+}
+
+input[type=file]{
+
+    margin-top:8px;
+
+}
+
+/* ===============================
+   Terms
+================================ */
+
+.terms{
+
+    margin-top:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+/* ===============================
+   Button
+================================ */
+
+#createAccount{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#36c;
+
+    color:white;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+#createAccount:hover{
+
+    background:#2a4fb8;
+
+    transform:translateY(-2px);
+
+}
+
+/* ===============================
+   Links
+================================ */
+
+.links{
+
+    text-align:center;
+
+    margin-top:18px;
+
+}
+
+.links a{
+
+    text-decoration:none;
+
+    color:#36c;
+
+}
+
+.links a:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ===============================
+   Footer
+================================ */
+
+footer{
+
+    margin-top:30px;
+
+    background:#202122;
+
+    color:white;
+
+    text-align:center;
+
+    padding:18px;
+
+}
+
+/* ===============================
+   Responsive
+================================ */
+
+@media(max-width:700px){
+
+.registerBox{
+
+padding:20px;
+
+}
+
+.registerBox h1{
+
+font-size:28px;
+
+}
+
+#iconPreview{
+
+width:110px;
+height:110px;
+
+}
+
+}
