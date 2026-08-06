@@ -351,3 +351,62 @@ function isLogin(){
     return getSession()!=null;
 
 }
+/*=========================
+ プロフィール表示
+=========================*/
+
+loadProfile();
+
+function loadProfile(){
+
+    const session=getSession();
+
+    if(!session)return;
+
+    const user=findUser(session.username);
+
+    if(!user)return;
+
+    if(document.getElementById("profileIcon")){
+
+        document.getElementById("profileIcon").src=user.icon;
+
+        document.getElementById("displayName").textContent=user.displayName;
+
+        document.getElementById("username").textContent="@"+user.username;
+
+        document.getElementById("bio").textContent=user.bio;
+
+        document.getElementById("articleCount").textContent=user.articleCount;
+
+        document.getElementById("editCount").textContent=user.editCount;
+
+        document.getElementById("createdDate").textContent=user.created;
+
+        document.getElementById("role").textContent=user.role;
+
+        const badge=document.getElementById("badgeArea");
+
+        badge.innerHTML="";
+
+        if(user.badges.length===0){
+
+            badge.textContent="まだバッジがありません。";
+
+        }else{
+
+            user.badges.forEach(function(item){
+
+                const div=document.createElement("div");
+
+                div.textContent=item;
+
+                badge.appendChild(div);
+
+            });
+
+        }
+
+    }
+
+}
