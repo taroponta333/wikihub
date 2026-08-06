@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WikiHub</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header id="topBar">
+
+        <div class="logo">
+            🌐 <span>WikiHub</span>
+        </div>
+
+        <div class="searchArea">
+            <input
+                type="text"
+                placeholder="Wiki・記事を検索..."
+                id="searchBox">
+            <button id="searchButton">
+                🔍
+            </button>
+        </div>
+
+        <div class="accountArea">
+
+            <button id="loginButton">
+                ログイン
+            </button>
+
+            <button id="registerButton">
+                新規登録
+            </button>
+
+        </div>
+
+    </header>
+
+    <!-- メイン -->
+
+    <main>
+
+        <!-- 左メニュー -->
+
+        <aside id="leftMenu">
+
+            <h2>📚 メニュー</h2>
+
+            <nav>
+
+                <a href="#">🏠 ホーム</a>
+
+                <a href="#">📚 Wiki一覧</a>
+
+                <a href="#">⭐ お気に入り</a>
+
+                <a href="#">🕒 最近見た記事</a>
+
+                <a href="#">🛠 Wikiスプローラー</a>
+
+                <a href="#">⚙ 設定</a>
+
+            </nav>
+
+        </aside>
+
+        <!-- 中央 -->
+
+        <section id="center">
+
+            <div class="welcome">
+
+                <h1>WikiHubへようこそ！</h1>
+
+                <p>
+                    あなただけのWikiを作成・管理できる
+                    オフライン対応Wikiプラットフォームです。
+                </p>
+
+            </div>
+
+            <div class="wikiList">
+
+                <h2>📚 おすすめWiki</h2>
+
+                <div class="wikiCard">
+                    🎮 ゲームWiki
+                </div>
+
+                <div class="wikiCard">
+                    🔬 科学Wiki
+                </div>
+
+                <div class="wikiCard">
+                    🏛 歴史Wiki
+                </div>
+
+                <div class="wikiCard">
+                    🎨 イラストWiki
+                </div>
+
+            </div>
+
+            <div class="recent">
+
+                <h2>📰 最近更新</h2>
+
+                <ul>
+
+                    <li>Minecraft が更新されました</li>
+
+                    <li>元素一覧 が更新されました</li>
+
+                    <li>ポーランドボール が更新されました</li>
+
+                    <li>HTML が更新されました</li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+        <!-- 右サイド -->
+
+        <aside id="rightMenu">
+
+            <div class="panel">
+
+                <h2>📢 お知らせ</h2>
+
+                <p>
+                    WikiHub Version 0.1 開発中
+                </p>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>📊 統計</h2>
+
+                <ul>
+
+                    <li>Wiki：4</li>
+
+                    <li>記事：152</li>
+
+                    <li>利用者：1</li>
+
+                    <li>画像：38</li>
+
+                </ul>
+
+            </div>
+
+            <div class="panel">
+
+                <h2>🔥 人気記事</h2>
+
+                <ol>
+
+                    <li>Minecraft</li>
+
+                    <li>ポーランドボール</li>
+
+                    <li>元素一覧</li>
+
+                </ol>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+    <!-- フッター -->
+
+    <footer>
+
+        <p>
+            WikiHub © 2026
+        </p>
+
+    </footer>
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
