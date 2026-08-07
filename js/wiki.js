@@ -942,3 +942,240 @@ card.style.display="none";
 });
 
 }
+
+/*==================================
+ Page System
+==================================*/
+
+function getPages(){
+
+    return JSON.parse(
+
+        localStorage.getItem(
+
+            "wikihub_pages"
+
+        )
+
+    )||[];
+
+}
+
+function savePages(pages){
+
+    localStorage.setItem(
+
+        "wikihub_pages",
+
+        JSON.stringify(pages)
+
+    );
+
+}
+function createPage(
+
+    wikiId,
+
+    title,
+
+    category,
+
+    content
+
+){
+
+    const pages=getPages();
+
+    const session=getSession();
+
+    const page={
+
+        id:Date.now(),
+
+        wikiId,
+
+        title,
+
+        icon:"",
+
+        category,
+
+        tags:[],
+
+        content,
+
+        author:session.username,
+
+        createdAt:new Date().toISOString(),
+
+        updatedAt:new Date().toISOString(),
+
+        views:0,
+
+        stars:0,
+
+        comments:[],
+
+        history:[],
+
+        attachments:[]
+
+    };
+
+    pages.push(page);
+
+    savePages(pages);
+
+    return page;
+
+}
+function createMainPage(
+
+    wikiId
+
+){
+
+    createPage(
+
+        wikiId,
+
+        "メインページ",
+
+        "ホーム",
+
+`# ようこそ！
+
+このWikiへようこそ！
+
+この記事を編集してWikiを作りましょう。`
+
+    );
+
+}
+function getWikiPages(
+
+    wikiId
+
+){
+
+    return getPages()
+
+    .filter(
+
+        p=>p.wikiId===wikiId
+
+    );
+
+}
+function getPage(
+
+    id
+
+){
+
+    return getPages()
+
+    .find(
+
+        p=>p.id==id
+
+    );
+
+}
+function updatePage(
+
+    id,
+
+    data
+
+){
+
+    const pages=getPages();
+
+    const page=
+
+    pages.find(
+
+        p=>p.id==id
+
+    );
+
+    if(!page)return;
+
+    Object.assign(
+
+        page,
+
+        data
+
+    );
+
+    page.updatedAt=
+
+    new Date()
+
+    .toISOString();
+
+    savePages(pages);
+
+}
+function deletePage(
+
+    id
+
+){
+
+    const pages=
+
+    getPages()
+
+    .filter(
+
+        p=>p.id!=id
+
+    );
+
+    savePages(
+
+        pages
+
+    );
+
+}
+function searchPages(
+
+    wikiId,
+
+    keyword
+
+){
+
+    keyword=
+
+    keyword.toLowerCase();
+
+    return getWikiPages(
+
+        wikiId
+
+    ).filter(
+
+        page=>
+
+        page.title
+
+        .toLowerCase()
+
+        .includes(keyword)
+
+        ||
+
+        page.content
+
+        .toLowerCase()
+
+        .includes(keyword)
+
+    );
+
+}
