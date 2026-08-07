@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>WikiHub</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/wiki.css">
+
+</head>
+<body>
+
+<header id="topBar">
+
+<div class="logo">
+
+🌐 WikiHub
+
+</div>
+
+<div class="searchArea">
+
+<input
+type="text"
+id="pageSearch"
+placeholder="このWikiを検索">
+
+<button id="searchButton">
+
+🔍
+
+</button>
+
+</div>
+
+<div class="accountArea">
+
+<button id="editPage">
+
+✏ 編集
+
+</button>
+
+<button id="historyPage">
+
+📜 履歴
+
+</button>
+
+<button onclick="location.href='explorer.html'">
+
+📁 Wiki一覧
+
+</button>
+
+</div>
+
+</header>
+
+<main>
+
+<!-- 左サイド -->
+
+<aside id="leftMenu">
+
+<div class="panel">
+
+<h2>
+
+📚 ページ
+
+</h2>
+
+<div id="pageList">
+
+<!-- JS -->
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+📂 カテゴリ
+
+</h2>
+
+<div id="categoryList">
+
+ゲーム
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+⭐ お気に入り
+
+</h2>
+
+<div id="favoriteList">
+
+なし
+
+</div>
+
+</div>
+
+</aside>
+
+<!-- 中央 -->
+
+<section id="center">
+
+<div class="welcome">
+
+<h1 id="pageTitle">
+
+読み込み中...
+
+</h1>
+
+<p id="pageInfo">
+
+作成者：
+更新：
+
+</p>
+
+</div>
+
+<div class="panel">
+
+<div id="pageContent">
+
+記事を読み込んでいます...
+
+</div>
+
+</div>
+
+</section>
+
+<!-- 右 -->
+
+<aside id="rightMenu">
+
+<div class="panel">
+
+<h2>
+
+📑 目次
+
+</h2>
+
+<div id="toc">
+
+読み込み中...
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+📰 最近更新
+
+</h2>
+
+<div id="recentPages">
+
+読み込み中...
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+📊 Wiki情報
+
+</h2>
+
+<ul>
+
+<li>
+
+記事数：
+<span id="wikiPages">
+
+0
+
+</span>
+
+</li>
+
+<li>
+
+メンバー：
+<span id="wikiMembers">
+
+0
+
+</span>
+
+</li>
+
+<li>
+
+カテゴリー：
+<span id="wikiCategories">
+
+0
+
+</span>
+
+</li>
+
+</ul>
+
+</div>
+
+</aside>
+
+</main>
+
+<footer>
+
+WikiHub ©2026
+
+</footer>
+
+<script src="js/wiki.js"></script>
+
+</body>
+</html>
