@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Wikiスプローラー - WikiHub</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+
+<header id="topBar">
+
+<div class="logo">
+
+🌐 WikiHub
+
+</div>
+
+<div class="searchArea">
+
+<input
+type="text"
+id="wikiSearch"
+placeholder="Wikiを検索">
+
+<button id="searchButton">
+
+🔍
+
+</button>
+
+</div>
+
+<div class="accountArea">
+
+<button onclick="location.href='create-wiki.html'">
+
+＋ 新しいWiki
+
+</button>
+
+<button onclick="location.href='index.html'">
+
+ホーム
+
+</button>
+
+</div>
+
+</header>
+
+<main>
+
+<!-- 左 -->
+
+<aside id="leftMenu">
+
+<h2>📂 Wiki</h2>
+
+<nav>
+
+<a href="#">📚 すべて</a>
+
+<a href="#">⭐ お気に入り</a>
+
+<a href="#">🕒 最近開いた</a>
+
+<a href="#">👤 自分のWiki</a>
+
+<a href="#">🌍 公開Wiki</a>
+
+<a href="#">🔒 非公開Wiki</a>
+
+</nav>
+
+</aside>
+
+<!-- 中央 -->
+
+<section id="center">
+
+<div class="welcome">
+
+<h1>
+
+Wikiスプローラー
+
+</h1>
+
+<p>
+
+Wikiを管理します。
+
+</p>
+
+</div>
+
+<div id="wikiContainer">
+
+<!-- JavaScriptで生成 -->
+
+</div>
+
+</section>
+
+<!-- 右 -->
+
+<aside id="rightMenu">
+
+<div class="panel">
+
+<h2>
+
+📊 全体統計
+
+</h2>
+
+<ul>
+
+<li>Wiki：<span id="wikiCount">0</span></li>
+
+<li>記事：<span id="pageCount">0</span></li>
+
+<li>メンバー：<span id="memberCount">0</span></li>
+
+</ul>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+⚡ クイック操作
+
+</h2>
+
+<button id="newWiki">
+
+＋ Wiki作成
+
+</button>
+
+<br><br>
+
+<button id="backup">
+
+💾 バックアップ
+
+</button>
+
+<br><br>
+
+<button id="restore">
+
+📥 復元
+
+</button>
+
+</div>
+
+</aside>
+
+</main>
+
+<script src="js/wiki.js"></script>
+
+</body>
+</html>
