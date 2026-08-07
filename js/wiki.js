@@ -653,3 +653,292 @@ function importDatabase(){
     input.click();
 
 }
+/*==================================
+ 現在のWiki
+==================================*/
+
+let currentWiki=null;
+let currentPage=null;
+
+document.addEventListener("DOMContentLoaded",function(){
+
+    if(document.getElementById("pageTitle")){
+
+        openCurrentWiki();
+
+    }
+
+});
+
+/*==================================
+ Wiki読み込み
+==================================*/
+
+function openCurrentWiki(){
+
+    const id=localStorage.getItem(
+        "wikihub_currentWiki"
+    );
+
+    if(!id){
+
+        alert("Wikiが選択されていません。");
+        location.href="explorer.html";
+        return;
+
+    }
+
+    loadWikis();
+
+    currentWiki=wikis.find(function(w){
+
+        return w.id===id;
+
+    });
+
+    if(!currentWiki){
+
+        alert("Wikiが見つかりません。");
+        return;
+
+    }
+
+    renderPageList();
+
+    openPage(currentWiki.pages[0].id);
+
+    updateWikiInfo();
+
+}
+
+/*==================================
+ ページ一覧
+==================================*/
+
+function renderPageList(){
+
+    const list=document.getElementById("pageList");
+
+    if(!list)return;
+
+    list.innerHTML="";
+
+    currentWiki.pages.forEach(function(page){
+
+        const item=document.createElement("div");
+
+        item.className="wikiCard";
+
+        item.style.marginBottom="8px";
+
+        item.innerHTML=`
+
+            📄 ${page.title}
+
+        `;
+
+        item.onclick=function(){
+
+            openPage(page.id);
+
+        };
+
+        list.appendChild(item);
+
+    });
+
+}
+
+/*==================================
+ ページを開く
+==================================*/
+
+function openPage(id){
+
+    currentPage=currentWiki.pages.find(function(p){
+
+        return p.id===id;
+
+    });
+
+    if(!currentPage)return;
+
+    document.getElementById("pageTitle").textContent=
+    currentPage.title;
+
+    document.getElementById("pageInfo").innerHTML=`
+
+        作成：
+        ${currentPage.created}
+
+        <br>
+
+        更新：
+        ${currentPage.updated}
+
+    `;
+
+    document.getElementById("pageContent").innerHTML=
+
+        parseWiki(currentPage.content);
+
+    createTOC();
+
+}
+
+/*==================================
+ Wiki記法
+==================================*/
+
+function parseWiki(text){
+
+    let html=text;
+
+    html=html.replace(/^# (.*)$/gm,"<h1>$1</h1>");
+
+    html=html.replace(/^## (.*)$/gm,"<h2>$1</h2>");
+
+    html=html.replace(/^### (.*)$/gm,"<h3>$1</h3>");
+
+    html=html.replace(/\*\*(.*?)\*\*/g,"<b>$1</b>");
+
+    html=html.replace(/\*(.*?)\*/g,"<i>$1</i>");
+
+    html=html.replace(/\n/g,"<br>");
+
+    html=html.replace(
+
+        /\[\[(.*?)\]\]/g,
+
+        function(match,title){
+
+            return `<a href="#" onclick="jumpPage('${title}')">${title}</a>`;
+
+        }
+
+    );
+
+    return html;
+
+}
+
+/*==================================
+ 内部リンク
+==================================*/
+
+function jumpPage(title){
+
+    const page=currentWiki.pages.find(function(p){
+
+        return p.title===title;
+
+    });
+
+    if(!page){
+
+        alert("ページがありません。");
+        return;
+
+    }
+
+    openPage(page.id);
+
+}
+
+/*==================================
+ 目次
+==================================*/
+
+function createTOC(){
+
+    const toc=document.getElementById("toc");
+
+    if(!toc)return;
+
+    toc.innerHTML="";
+
+    const headers=
+
+    document.querySelectorAll(
+
+        "#pageContent h1,#pageContent h2,#pageContent h3"
+
+    );
+
+    headers.forEach(function(h,index){
+
+        const div=document.createElement("div");
+
+        div.innerHTML=
+
+        (index+1)+" "+h.textContent;
+
+        div.style.cursor="pointer";
+
+        div.onclick=function(){
+
+            h.scrollIntoView({
+
+                behavior:"smooth"
+
+            });
+
+        };
+
+        toc.appendChild(div);
+
+    });
+
+}
+
+/*==================================
+ Wiki情報
+==================================*/
+
+function updateWikiInfo(){
+
+    document.getElementById("wikiPages").textContent=
+
+    currentWiki.statistics.pages;
+
+    document.getElementById("wikiMembers").textContent=
+
+    currentWiki.statistics.members;
+
+    document.getElementById("wikiCategories").textContent=
+
+    1;
+
+}
+
+/*==================================
+ Wiki検索
+==================================*/
+
+const pageSearch=document.getElementById("pageSearch");
+
+if(pageSearch){
+
+pageSearch.addEventListener("input",function(){
+
+const word=this.value.toLowerCase();
+
+const cards=document.querySelectorAll("#pageList .wikiCard");
+
+cards.forEach(function(card){
+
+if(card.textContent.toLowerCase().includes(word)){
+
+card.style.display="block";
+
+}else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+}
