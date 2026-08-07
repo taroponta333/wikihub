@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Wiki作成 - WikiHub</title>
+
+<link rel="stylesheet" href="css/login.css">
+
+</head>
+<body>
+
+<header>
+
+<div class="logo">
+🌐 WikiHub
+</div>
+
+</header>
+
+<main>
+
+<div class="registerBox">
+
+<h1>新しいWikiを作成</h1>
+
+<p class="subtitle">
+
+あなた専用のWikiを作成します。
+
+</p>
+
+<label>
+
+Wiki名
+
+<input
+type="text"
+id="wikiName"
+maxlength="50"
+placeholder="例：ゲームWiki">
+
+</label>
+
+<label>
+
+説明
+
+<textarea
+id="wikiDescription"
+rows="5"
+maxlength="1000"
+placeholder="Wikiの説明を書いてください。"></textarea>
+
+</label>
+
+<label>
+
+Wikiアイコン
+
+<input
+type="file"
+id="wikiIcon"
+accept="image/*,.gif">
+
+</label>
+
+<div class="iconArea">
+
+<img
+id="wikiIconPreview"
+src="images/wiki-default.png"
+style="width:120px;height:120px;border-radius:20px;object-fit:cover;">
+
+</div>
+
+<label>
+
+公開設定
+
+<select id="wikiVisibility">
+
+<option value="public">
+
+🌍 公開
+
+</option>
+
+<option value="private">
+
+🔒 非公開
+
+</option>
+
+<option value="unlisted">
+
+🔗 限定公開
+
+</option>
+
+</select>
+
+</label>
+
+<label>
+
+ジャンル
+
+<select id="wikiCategory">
+
+<option>ゲーム</option>
+<option>アニメ</option>
+<option>歴史</option>
+<option>科学</option>
+<option>プログラミング</option>
+<option>オリジナル</option>
+<option>その他</option>
+
+</select>
+
+</label>
+
+<label>
+
+テーマ
+
+<select id="wikiTheme">
+
+<option>Wikipedia</option>
+
+<option>Miraheze</option>
+
+<option>Fandom</option>
+
+<option>WikiHub Default</option>
+
+</select>
+
+</label>
+
+<label>
+
+トップページ名
+
+<input
+type="text"
+id="mainPage"
+value="メインページ">
+
+</label>
+
+<div class="terms">
+
+<input
+type="checkbox"
+id="allowComments"
+checked>
+
+<label for="allowComments">
+
+コメントを許可
+
+</label>
+
+</div>
+
+<div class="terms">
+
+<input
+type="checkbox"
+id="allowRegisterOnly">
+
+<label for="allowRegisterOnly">
+
+登録ユーザーのみ編集可能
+
+</label>
+
+</div>
+
+<button id="createWiki">
+
+Wikiを作成
+
+</button>
+
+</div>
+
+</main>
+
+<footer>
+
+WikiHub ©2026
+
+</footer>
+
+<script src="js/wiki.js"></script>
+
+</body>
+</html>
