@@ -1,193 +1,1086 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WikiHub</title>
 
-    <link rel="stylesheet" href="css/style.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>WikiHub v0.2</title>
+
+<meta
+name="description"
+content="オフラインでも使える多機能Wikiシステム">
+
+<link
+rel="stylesheet"
+href="css/style.css">
+
+<link
+rel="stylesheet"
+href="css/wiki.css">
+
+<link
+rel="icon"
+href="images/logo.png">
+
 </head>
+
 <body>
 
-    <!-- ヘッダー -->
-    <header id="topBar">
+<header id="topBar">
 
-        <div class="logo">
-            🌐 <span>WikiHub</span>
-        </div>
+    <!-- ロゴ -->
 
-        <div class="searchArea">
-            <input
-                type="text"
-                placeholder="Wiki・記事を検索..."
-                id="searchBox">
-            <button id="searchButton">
-                🔍
-            </button>
-        </div>
+    <div class="logo">
 
-        <div class="accountArea">
+        🌐 WikiHub
 
-            <button id="loginButton">
+    </div>
+
+    <!-- 検索 -->
+
+    <div class="searchArea">
+
+        <input
+            type="text"
+            id="searchBox"
+            placeholder="Wiki・記事を検索">
+
+        <button id="searchButton">
+
+            🔍
+
+        </button>
+
+    </div>
+
+    <!-- アカウント -->
+
+    <div class="accountArea">
+
+        <!-- 未ログイン -->
+
+        <div id="guestArea">
+
+            <button
+                onclick="location.href='login.html'">
+
                 ログイン
+
             </button>
 
-            <button id="registerButton">
+            <button
+                onclick="location.href='register.html'">
+
                 新規登録
+
             </button>
 
         </div>
 
-    </header>
+        <!-- ログイン済み -->
 
-    <!-- メイン -->
+        <div
+            id="userArea"
+            style="display:none;">
 
-    <main>
+            <img
+                id="headerIcon"
+                class="headerIcon"
+                src="images/default-user.png"
+                alt="アイコン">
 
-        <!-- 左メニュー -->
+            <div class="userInfo">
 
-        <aside id="leftMenu">
+                <div id="headerUsername">
 
-            <h2>📚 メニュー</h2>
+                    User
 
-            <nav>
-
-                <a href="index.html">🏠 ホーム</a>
-
-                <a href="explorer.html">📚 Wiki一覧</a>
-
-                <a href="favorites.html">⭐ お気に入り</a>
-
-                <a href="recent.html">🕒 最近見た記事</a>
-
-                <a href="admin.html">🛠 Wikiスプローラー</a>
-
-                <a href="account.html">⚙ 設定</a>
-            </nav>
-
-        </aside>
-
-        <!-- 中央 -->
-
-        <section id="center">
-
-            <div class="welcome">
-
-                <h1>WikiHubへようこそ！</h1>
-
-                <p>
-                    あなただけのWikiを作成・管理できる
-                    オフライン対応Wikiプラットフォームです。
-                </p>
-
-            </div>
-
-            <div class="wikiList">
-
-                <h2>📚 おすすめWiki</h2>
-
-                <div class="wikiCard">
-                    🎮 ゲームWiki
                 </div>
 
-                <div class="wikiCard">
-                    🔬 科学Wiki
-                </div>
+                <div id="headerRole">
 
-                <div class="wikiCard">
-                    🏛 歴史Wiki
-                </div>
+                    User
 
-                <div class="wikiCard">
-                    🎨 イラストWiki
                 </div>
 
             </div>
 
-            <div class="recent">
+            <button
+                id="headerMenuButton">
 
-                <h2>📰 最近更新</h2>
+                ▼
 
-                <ul>
+            </button>
 
-                    <li>Minecraft が更新されました</li>
+        </div>
 
-                    <li>元素一覧 が更新されました</li>
+    </div>
 
-                    <li>ポーランドボール が更新されました</li>
+</header>
 
-                    <li>HTML が更新されました</li>
+<!-- ユーザーメニュー -->
 
-                </ul>
+<div
+id="headerMenu"
+class="dropdownMenu"
+style="display:none;">
 
-            </div>
+    <button onclick="location.href='profile.html'">
 
-        </section>
+        👤 プロフィール
 
-        <!-- 右サイド -->
+    </button>
 
-        <aside id="rightMenu">
+    <button onclick="location.href='account.html'">
 
-            <div class="panel">
+        ⚙ アカウント設定
 
-                <h2>📢 お知らせ</h2>
+    </button>
 
-                <p>
-                    WikiHub Version 0.1 開発中
-                </p>
+    <button onclick="location.href='explorer.html'">
 
-            </div>
+        📚 Wiki一覧
 
-            <div class="panel">
+    </button>
 
-                <h2>📊 統計</h2>
+    <button onclick="location.href='favorites.html'">
 
-                <ul>
+        ⭐ お気に入り
 
-                    <li>Wiki：4</li>
+    </button>
 
-                    <li>記事：152</li>
+    <button onclick="location.href='admin.html'">
 
-                    <li>利用者：1</li>
+        🛠 Wikiスプローラー
 
-                    <li>画像：38</li>
+    </button>
 
-                </ul>
+    <hr>
 
-            </div>
+    <button
+        id="logoutButton">
 
-            <div class="panel">
+        🚪 ログアウト
 
-                <h2>🔥 人気記事</h2>
+    </button>
 
-                <ol>
+</div>
 
-                    <li>Minecraft</li>
+<main>
+    <!--==================================
+ 左サイドバー
+===================================-->
 
-                    <li>ポーランドボール</li>
+<aside id="leftMenu">
 
-                    <li>元素一覧</li>
+    <!-- ナビゲーション -->
 
-                </ol>
+    <div class="panel">
 
-            </div>
+        <h2>
 
-        </aside>
+            🏠 ナビゲーション
 
-    </main>
+        </h2>
 
-    <!-- フッター -->
+        <nav class="menuList">
 
-    <footer>
+            <a href="index.html">
 
-        <p>
-            WikiHub © 2026
+                🏠 ホーム
+
+            </a>
+
+            <a href="explorer.html">
+
+                📚 Wiki一覧
+
+            </a>
+
+            <a href="create-wiki.html">
+
+                ➕ Wiki作成
+
+            </a>
+
+            <a href="profile.html">
+
+                👤 マイプロフィール
+
+            </a>
+
+            <a href="account.html">
+
+                ⚙ アカウント設定
+
+            </a>
+
+            <a href="admin.html">
+
+                🛠 Wikiスプローラー
+
+            </a>
+
+        </nav>
+
+    </div>
+
+    <!-- クイックアクセス -->
+
+    <div class="panel">
+
+        <h2>
+
+            ⚡ クイックアクセス
+
+        </h2>
+
+        <button
+            class="menuButton"
+            onclick="location.href='create-wiki.html'">
+
+            📖 新しいWiki
+
+        </button>
+
+        <button
+            class="menuButton"
+            onclick="location.href='editor.html'">
+
+            ✏ 新しい記事
+
+        </button>
+
+        <button
+            class="menuButton"
+            onclick="location.href='explorer.html'">
+
+            🔍 Wikiを探す
+
+        </button>
+
+    </div>
+
+    <!-- 最近開いたWiki -->
+
+    <div class="panel">
+
+        <h2>
+
+            🕒 最近開いたWiki
+
+        </h2>
+
+        <div id="recentWikiList">
+
+            <p>まだありません</p>
+
+        </div>
+
+    </div>
+
+    <!-- お気に入り -->
+
+    <div class="panel">
+
+        <h2>
+
+            ⭐ お気に入り
+
+        </h2>
+
+        <div id="favoriteWikiList">
+
+            <p>まだありません</p>
+
+        </div>
+
+    </div>
+
+    <!-- カテゴリ -->
+
+    <div class="panel">
+
+        <h2>
+
+            📂 カテゴリ
+
+        </h2>
+
+        <div class="categoryList">
+
+            <button class="categoryButton">
+
+                🎮 ゲーム
+
+            </button>
+
+            <button class="categoryButton">
+
+                📺 アニメ
+
+            </button>
+
+            <button class="categoryButton">
+
+                💻 プログラミング
+
+            </button>
+
+            <button class="categoryButton">
+
+                🏛 歴史
+
+            </button>
+
+            <button class="categoryButton">
+
+                🔬 科学
+
+            </button>
+
+            <button class="categoryButton">
+
+                🎨 アート
+
+            </button>
+
+            <button class="categoryButton">
+
+                📖 その他
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- システム情報 -->
+
+    <div class="panel">
+
+        <h2>
+
+            💾 システム
+
+        </h2>
+
+        <ul class="systemInfo">
+
+            <li>
+
+                Version
+                <span>
+
+                    v0.2
+
+                </span>
+
+            </li>
+
+            <li>
+
+                保存方式
+                <span>
+
+                    localStorage
+
+                </span>
+
+            </li>
+
+            <li>
+
+                モード
+                <span>
+
+                    Offline
+
+                </span>
+
+            </li>
+
+        </ul>
+
+    </div>
+
+</aside>
+
+<!--==================================
+ 中央エリア開始
+===================================-->
+
+<section id="center">
+    <!--==================================
+ ホーム
+===================================-->
+
+<div class="welcome">
+
+    <h1 id="welcomeTitle">
+
+        🌐 WikiHubへようこそ！
+
+    </h1>
+
+    <p id="welcomeMessage">
+
+        オフラインでも使える、多機能Wikiプラットフォームです。
+
+    </p>
+
+</div>
+
+<!-- ダッシュボード -->
+
+<div class="dashboard">
+
+    <div class="dashboardCard">
+
+        <h3>
+
+            📚 Wiki
+
+        </h3>
+
+        <span id="dashboardWiki">
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="dashboardCard">
+
+        <h3>
+
+            📄 記事
+
+        </h3>
+
+        <span id="dashboardPages">
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="dashboardCard">
+
+        <h3>
+
+            👥 ユーザー
+
+        </h3>
+
+        <span id="dashboardUsers">
+
+            0
+
+        </span>
+
+    </div>
+
+    <div class="dashboardCard">
+
+        <h3>
+
+            🖼 ファイル
+
+        </h3>
+
+        <span id="dashboardFiles">
+
+            0
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- おすすめ -->
+
+<div class="panel">
+
+<h2>
+
+⭐ おすすめWiki
+
+</h2>
+
+<div
+id="featuredWiki"
+class="wikiGrid">
+
+<!-- JS -->
+
+</div>
+
+</div>
+
+<!-- 自分のWiki -->
+
+<div class="panel">
+
+<h2>
+
+📖 自分のWiki
+
+</h2>
+
+<div
+id="myWikiList"
+class="wikiGrid">
+
+<!-- JS -->
+
+</div>
+
+</div>
+
+<!-- 最近更新 -->
+
+<div class="panel">
+
+<h2>
+
+📰 最近更新された記事
+
+</h2>
+
+<div id="recentUpdateList">
+
+<div class="recentItem">
+
+📄 メインページ
+
+<span>
+
+今日
+
+</span>
+
+</div>
+
+<div class="recentItem">
+
+📄 トップページ
+
+<span>
+
+昨日
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- 最近作成 -->
+
+<div class="panel">
+
+<h2>
+
+🆕 最近作成されたWiki
+
+</h2>
+
+<div
+id="newWikiList"
+class="wikiGrid">
+
+<!-- JS -->
+
+</div>
+
+</div>
+
+<!-- 人気記事 -->
+
+<div class="panel">
+
+<h2>
+
+🔥 人気記事
+
+</h2>
+
+<div id="popularPages">
+
+<div class="popularItem">
+
+🥇 メインページ
+
+</div>
+
+<div class="popularItem">
+
+🥈 WikiHubについて
+
+</div>
+
+<div class="popularItem">
+
+🥉 サンドボックス
+
+</div>
+
+</div>
+
+</div>
+
+<!-- お知らせ -->
+
+<div class="panel">
+
+<h2>
+
+📢 お知らせ
+
+</h2>
+
+<div id="newsArea">
+
+<p>
+
+🎉 WikiHub v0.2へようこそ！
+
+</p>
+
+<p>
+
+🚀 Wikiを作成してみましょう！
+
+</p>
+
+<p>
+
+📚 管理ツールからWikiを管理できます。
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<!--==================================
+ 右サイドバー開始
+===================================-->
+
+<aside id="rightMenu">
+<!--==================================
+ ログインユーザー
+===================================-->
+
+<div class="panel">
+
+    <h2>
+
+        👤 ユーザー
+
+    </h2>
+
+    <div id="rightUserCard">
+
+        <img
+            id="sideUserIcon"
+            src="images/default-user.png"
+            class="sideUserIcon"
+            alt="ユーザーアイコン">
+
+        <h3 id="sideUsername">
+
+            ゲスト
+
+        </h3>
+
+        <p id="sideRole">
+
+            Guest
+
         </p>
 
-    </footer>
+        <button
+            onclick="location.href='profile.html'">
 
-    <script src="js/app.js"></script>
-    <script src="js/auth.js"></script>
+            プロフィール
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- 編集ランキング -->
+
+<div class="panel">
+
+    <h2>
+
+        🏆 編集ランキング
+
+    </h2>
+
+    <ol id="rankingList">
+
+        <li>まだデータがありません</li>
+
+    </ol>
+
+</div>
+
+<!-- 最近の活動 -->
+
+<div class="panel">
+
+    <h2>
+
+        📈 最近の活動
+
+    </h2>
+
+    <div id="activityList">
+
+        <p>
+
+            編集履歴はありません
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ストレージ -->
+
+<div class="panel">
+
+    <h2>
+
+        💾 ストレージ
+
+    </h2>
+
+    <div class="storageBox">
+
+        <div
+            id="storageBar"
+            class="progressBar">
+
+        </div>
+
+    </div>
+
+    <p id="storageText">
+
+        0 MB / 10 MB
+
+    </p>
+
+</div>
+
+<!-- バッジ -->
+
+<div class="panel">
+
+    <h2>
+
+        🏅 バッジ
+
+    </h2>
+
+    <div id="badgeList">
+
+        <span class="badge">
+
+            🌱 Beginner
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- WikiHub統計 -->
+
+<div class="panel">
+
+    <h2>
+
+        📊 WikiHub統計
+
+    </h2>
+
+    <table class="statsTable">
+
+        <tr>
+
+            <td>
+
+                Wiki
+
+            </td>
+
+            <td id="totalWiki">
+
+                0
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                記事
+
+            </td>
+
+            <td id="totalPages">
+
+                0
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                ユーザー
+
+            </td>
+
+            <td id="totalUsers">
+
+                0
+
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td>
+
+                ファイル
+
+            </td>
+
+            <td id="totalFiles">
+
+                0
+
+            </td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<!-- クイックアクション -->
+
+<div class="panel">
+
+    <h2>
+
+        ⚡ クイックアクション
+
+    </h2>
+
+    <button
+        onclick="location.href='create-wiki.html'">
+
+        ➕ 新しいWiki
+
+    </button>
+
+    <br><br>
+
+    <button
+        onclick="location.href='editor.html'">
+
+        ✏ 新しい記事
+
+    </button>
+
+    <br><br>
+
+    <button
+        onclick="location.href='admin.html'">
+
+        🛠 Wikiスプローラー
+
+    </button>
+
+    <br><br>
+
+    <button
+        onclick="location.href='account.html'">
+
+        ⚙ 設定
+
+    </button>
+
+</div>
+
+</aside>
+
+<!--==================================
+ main終了
+===================================-->
+
+</main>
+<!--==================================
+ フッター
+===================================-->
+
+<footer id="footer">
+
+    <div class="footerLeft">
+
+        <strong>
+
+            🌐 WikiHub v0.2
+
+        </strong>
+
+        <br>
+
+        Offline Wiki Platform
+
+    </div>
+
+    <div class="footerCenter">
+
+        © 2026 WikiHub Project
+
+        <br>
+
+        HTML / CSS / JavaScript
+
+    </div>
+
+    <div class="footerRight">
+
+        localStorage Mode
+
+        <br>
+
+        Version 0.2.0
+
+    </div>
+
+</footer>
+
+<!--==================================
+ JavaScript
+===================================-->
+
+<script src="js/app.js"></script>
+
+<script src="js/auth.js"></script>
+
+<script src="js/wiki.js"></script>
+
+<script src="js/index.js"></script>
+
+<script>
+
+/*==================================
+ ヘッダーメニュー
+==================================*/
+
+document.addEventListener("DOMContentLoaded",function(){
+
+    const menuButton=document.getElementById("headerMenuButton");
+    const menu=document.getElementById("headerMenu");
+
+    if(menuButton && menu){
+
+        menuButton.addEventListener("click",function(e){
+
+            e.stopPropagation();
+
+            menu.style.display=
+                menu.style.display==="block"
+                ? "none"
+                : "block";
+
+        });
+
+        document.addEventListener("click",function(){
+
+            menu.style.display="none";
+
+        });
+
+    }
+
+});
+
+/*==================================
+ 検索
+==================================*/
+
+const searchButton=document.getElementById("searchButton");
+
+if(searchButton){
+
+    searchButton.addEventListener("click",function(){
+
+        const box=document.getElementById("searchBox");
+
+        const word=box.value.trim();
+
+        if(word==="") return;
+
+        location.href=
+        "explorer.html?search="+
+        encodeURIComponent(word);
+
+    });
+
+}
+
+/*==================================
+ Enterでも検索
+==================================*/
+
+const searchBox=document.getElementById("searchBox");
+
+if(searchBox){
+
+    searchBox.addEventListener("keydown",function(e){
+
+        if(e.key==="Enter"){
+
+            searchButton.click();
+
+        }
+
+    });
+
+}
+
+</script>
 
 </body>
+
 </html>
