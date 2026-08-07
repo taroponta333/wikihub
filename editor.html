@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>記事編集 - WikiHub</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/wiki.css">
+
+</head>
+<body>
+
+<header id="topBar">
+
+<div class="logo">
+✏ WikiHub Editor
+</div>
+
+<div class="accountArea">
+
+<button id="savePage">
+💾 保存
+</button>
+
+<button id="previewButton">
+👀 プレビュー
+</button>
+
+<button id="historyButton">
+📜 履歴
+</button>
+
+<button onclick="location.href='wiki.html'">
+⬅ 戻る
+</button>
+
+</div>
+
+</header>
+
+<main>
+
+<aside id="leftMenu">
+
+<div class="panel">
+
+<h2>
+
+📄 ページ情報
+
+</h2>
+
+<p>
+
+タイトル
+
+</p>
+
+<input
+id="pageTitleInput"
+type="text">
+
+<hr>
+
+<p>
+
+カテゴリ
+
+</p>
+
+<input
+id="pageCategory"
+type="text"
+placeholder="ゲーム">
+
+<hr>
+
+<p>
+
+タグ
+
+</p>
+
+<input
+id="pageTags"
+type="text"
+placeholder="Minecraft,Java">
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+⚡ クイック挿入
+
+</h2>
+
+<button onclick="insertText('== 見出し ==')">
+
+見出し
+
+</button>
+
+<br><br>
+
+<button onclick="insertText('[[リンク]]')">
+
+内部リンク
+
+</button>
+
+<br><br>
+
+<button onclick="insertText('**太字**')">
+
+太字
+
+</button>
+
+<br><br>
+
+<button onclick="insertText('*斜体*')">
+
+斜体
+
+</button>
+
+<br><br>
+
+<button onclick="insertText('{{Infobox}}')">
+
+Infobox
+
+</button>
+
+</div>
+
+</aside>
+
+<section id="center">
+
+<textarea
+id="editor"
+spellcheck="false"
+placeholder="ここに記事を書きます。"></textarea>
+
+</section>
+
+<aside id="rightMenu">
+
+<div class="panel">
+
+<h2>
+
+👀 プレビュー
+
+</h2>
+
+<div id="preview">
+
+ここに表示されます
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+
+📊 情報
+
+</h2>
+
+<div id="editorInfo">
+
+文字数：0
+
+<br>
+
+行数：0
+
+</div>
+
+</div>
+
+</aside>
+
+</main>
+
+<script src="js/wiki.js"></script>
+<script src="js/editor.js"></script>
+
+</body>
+</html>
