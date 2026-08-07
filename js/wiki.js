@@ -251,3 +251,405 @@ function createPageID(){
     return "page_"+crypto.randomUUID();
 
 }
+/*==================================
+ Wiki一覧表示
+==================================*/
+
+document.addEventListener("DOMContentLoaded",function(){
+
+    if(document.getElementById("wikiContainer")){
+
+        renderWikiList();
+
+        updateStatistics();
+
+        setupExplorerButtons();
+
+        setupSearch();
+
+    }
+
+});
+
+/*==================================
+ 表示
+==================================*/
+
+function renderWikiList(){
+
+    const container=document.getElementById("wikiContainer");
+
+    if(!container)return;
+
+    container.innerHTML="";
+
+    loadWikis();
+
+    if(wikis.length===0){
+
+        container.innerHTML=`
+        <div class="panel">
+            <h2>まだWikiがありません</h2>
+            <p>「＋ 新しいWiki」から作成できます。</p>
+        </div>
+        `;
+
+        return;
+
+    }
+
+    wikis.forEach(function(wiki){
+
+        const card=document.createElement("div");
+
+        card.className="wikiCard";
+
+        card.innerHTML=`
+
+        <div class="wikiTop">
+
+            <img
+                src="${wiki.icon}"
+                class="wikiIcon">
+
+            <div>
+
+                <h2>${wiki.name}</h2>
+
+                <p>${wiki.description}</p>
+
+            </div>
+
+        </div>
+
+        <div class="wikiInfo">
+
+            👤 ${wiki.owner}<br>
+            📂 ${wiki.category}<br>
+            📄 ${wiki.statistics.pages}記事<br>
+            👥 ${wiki.statistics.members}人
+
+        </div>
+
+        <div class="wikiButtons">
+
+            <button
+                onclick="openWiki('${wiki.id}')">
+
+                開く
+
+            </button>
+
+            <button
+                onclick="settingWiki('${wiki.id}')">
+
+                設定
+
+            </button>
+
+            <button
+                onclick="deleteWiki('${wiki.id}')">
+
+                削除
+
+            </button>
+
+        </div>
+
+        `;
+
+        container.appendChild(card);
+
+    });
+
+}
+
+/*==================================
+ Wikiを開く
+==================================*/
+
+function openWiki(id){
+
+    localStorage.setItem(
+
+        "wikihub_currentWiki",
+
+        id
+
+    );
+
+    location.href="wiki.html";
+
+}
+
+/*==================================
+ Wiki設定
+==================================*/
+
+function settingWiki(id){
+
+    localStorage.setItem(
+
+        "wikihub_currentWiki",
+
+        id
+
+    );
+
+    location.href="wiki-settings.html";
+
+}
+
+/*==================================
+ 削除
+==================================*/
+
+function deleteWiki(id){
+
+    if(!confirm("このWikiを削除しますか？")){
+
+        return;
+
+    }
+
+    wikis=wikis.filter(function(w){
+
+        return w.id!==id;
+
+    });
+
+    saveWikis();
+
+    renderWikiList();
+
+    updateStatistics();
+
+}
+
+/*==================================
+ 検索
+==================================*/
+
+function setupSearch(){
+
+    const box=document.getElementById("wikiSearch");
+
+    if(!box)return;
+
+    box.addEventListener("input",function(){
+
+        const keyword=
+
+        this.value.toLowerCase();
+
+        const cards=
+
+        document.querySelectorAll(".wikiCard");
+
+        cards.forEach(function(card){
+
+            if(card.textContent.toLowerCase().includes(keyword)){
+
+                card.style.display="block";
+
+            }else{
+
+                card.style.display="none";
+
+            }
+
+        });
+
+    });
+
+}
+
+/*==================================
+ 統計
+==================================*/
+
+function updateStatistics(){
+
+    let pages=0;
+
+    let members=0;
+
+    wikis.forEach(function(w){
+
+        pages+=w.statistics.pages;
+
+        members+=w.statistics.members;
+
+    });
+
+    document.getElementById("wikiCount").textContent=wikis.length;
+
+    document.getElementById("pageCount").textContent=pages;
+
+    document.getElementById("memberCount").textContent=members;
+
+}
+
+/*==================================
+ ボタン
+==================================*/
+
+function setupExplorerButtons(){
+
+    const newWiki=document.getElementById("newWiki");
+
+    if(newWiki){
+
+        newWiki.onclick=function(){
+
+            location.href="create-wiki.html";
+
+        };
+
+    }
+
+    const backup=document.getElementById("backup");
+
+    if(backup){
+
+        backup.onclick=function(){
+
+            exportDatabase();
+
+        };
+
+    }
+
+    const restore=document.getElementById("restore");
+
+    if(restore){
+
+        restore.onclick=function(){
+
+            importDatabase();
+
+        };
+
+    }
+
+}
+
+/*==================================
+ バックアップ
+==================================*/
+
+function exportDatabase(){
+
+    const backup={
+
+        users:JSON.parse(
+
+            localStorage.getItem("wikihub_users")
+
+        ),
+
+        wikis:wikis,
+
+        exported:new Date().toISOString(),
+
+        version:"0.1"
+
+    };
+
+    const blob=new Blob(
+
+        [
+
+            JSON.stringify(
+
+                backup,
+
+                null,
+
+                2
+
+            )
+
+        ],
+
+        {
+
+            type:"application/json"
+
+        }
+
+    );
+
+    const a=document.createElement("a");
+
+    a.href=URL.createObjectURL(blob);
+
+    a.download="WikiHub_Backup.json";
+
+    a.click();
+
+}
+
+/*==================================
+ 復元
+==================================*/
+
+function importDatabase(){
+
+    const input=document.createElement("input");
+
+    input.type="file";
+
+    input.accept=".json";
+
+    input.onchange=function(){
+
+        const file=input.files[0];
+
+        if(!file)return;
+
+        const reader=new FileReader();
+
+        reader.onload=function(){
+
+            const data=
+
+            JSON.parse(reader.result);
+
+            if(data.users){
+
+                localStorage.setItem(
+
+                    "wikihub_users",
+
+                    JSON.stringify(data.users)
+
+                );
+
+            }
+
+            if(data.wikis){
+
+                localStorage.setItem(
+
+                    "wikihub_wikis",
+
+                    JSON.stringify(data.wikis)
+
+                );
+
+            }
+
+            alert("復元しました！");
+
+            location.reload();
+
+        };
+
+        reader.readAsText(file);
+
+    };
+
+    input.click();
+
+}
