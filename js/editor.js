@@ -1,0 +1,906 @@
+/*
+========================================
+ WikiHub
+ editor.js
+ Part3-7a
+========================================
+*/
+
+"use strict";
+
+/*==============================
+ 変数
+==============================*/
+
+let editor;
+let preview;
+let info;
+
+let autoSaveTimer=null;
+
+let historyStack=[];
+let historyIndex=-1;
+
+/*==============================
+ 初期化
+==============================*/
+
+document.addEventListener("DOMContentLoaded",init);
+
+function init(){
+
+    editor=document.getElementById("editor");
+    preview=document.getElementById("preview");
+    info=document.getElementById("editorInfo");
+
+    if(!editor)return;
+
+    loadCurrentPage();
+
+    setupEditor();
+
+    updatePreview();
+
+    updateInfo();
+
+}
+
+/*==============================
+ ページ読込
+==============================*/
+
+function loadCurrentPage(){
+
+    const page=
+
+    JSON.parse(localStorage.getItem("wikihub_editPage"));
+
+    if(!page)return;
+
+    document.getElementById("pageTitleInput").value=
+
+    page.title;
+
+    editor.value=
+
+    page.content;
+
+}
+
+/*==============================
+ エディター
+==============================*/
+
+function setupEditor(){
+
+    saveHistory();
+
+    editor.addEventListener("input",function(){
+
+        updatePreview();
+
+        updateInfo();
+
+        autoSave();
+
+        saveHistory();
+
+    });
+
+}
+
+/*==============================
+ プレビュー
+==============================*/
+
+function updatePreview(){
+
+    preview.innerHTML=
+
+    parseWiki(editor.value);
+
+}
+
+/*==============================
+ 情報
+==============================*/
+
+function updateInfo(){
+
+    const text=editor.value;
+
+    const chars=text.length;
+
+    const lines=text.split("\n").length;
+
+    info.innerHTML=
+
+    `
+    文字数：${chars}
+    <br>
+    行数：${lines}
+    `;
+
+}
+
+/*==============================
+ 自動保存
+==============================*/
+
+function autoSave(){
+
+    clearTimeout(autoSaveTimer);
+
+    autoSaveTimer=setTimeout(function(){
+
+        localStorage.setItem(
+
+            "wikihub_draft",
+
+            editor.value
+
+        );
+
+        console.log("Draft Saved");
+
+    },1000);
+
+}
+
+/*==============================
+ 保存
+==============================*/
+
+document.addEventListener("keydown",function(e){
+
+    if(e.ctrlKey&&e.key==="s"){
+
+        e.preventDefault();
+
+        savePage();
+
+    }
+
+});
+
+function savePage(){
+
+    alert("保存機能はPart3-7bで実装します。");
+
+}
+
+/*==============================
+ Tab入力
+==============================*/
+
+editor?.addEventListener("keydown",function(e){
+
+    if(e.key==="Tab"){
+
+        e.preventDefault();
+
+        const start=this.selectionStart;
+
+        const end=this.selectionEnd;
+
+        this.value=
+
+        this.value.substring(0,start)
+
+        +"    "
+
+        +this.value.substring(end);
+
+        this.selectionStart=
+
+        this.selectionEnd=
+
+        start+4;
+
+    }
+
+});
+
+/*==============================
+ Undo
+==============================*/
+
+function saveHistory(){
+
+    historyStack.push(
+
+        editor.value
+
+    );
+
+    historyIndex=
+
+    historyStack.length-1;
+
+}
+
+/*==============================
+ Ctrl+Z
+==============================*/
+
+document.addEventListener("keydown",function(e){
+
+    if(e.ctrlKey&&e.key==="z"){
+
+        e.preventDefault();
+
+        undo();
+
+    }
+
+});
+
+function undo(){
+
+    if(historyIndex<=0)return;
+
+    historyIndex--;
+
+    editor.value=
+
+    historyStack[historyIndex];
+
+    updatePreview();
+
+    updateInfo();
+
+}
+
+/*==============================
+ Ctrl+Y
+==============================*/
+
+document.addEventListener("keydown",function(e){
+
+    if(e.ctrlKey&&e.key==="y"){
+
+        e.preventDefault();
+
+        redo();
+
+    }
+
+});
+
+function redo(){
+
+    if(historyIndex>=historyStack.length-1)return;
+
+    historyIndex++;
+
+    editor.value=
+
+    historyStack[historyIndex];
+
+    updatePreview();
+
+    updateInfo();
+
+}
+/*==================================
+ Part3-7b
+ 保存システム
+==================================*/
+
+/*==============================
+ 保存ボタン
+==============================*/
+
+document.addEventListener("DOMContentLoaded",function(){
+
+    const save=document.getElementById("savePage");
+
+    if(save){
+
+        save.addEventListener("click",savePage);
+
+    }
+
+});
+
+/*==============================
+ 保存
+==============================*/
+
+function savePage(){
+
+    loadWikis();
+
+    const wikiID=
+
+    localStorage.getItem("wikihub_currentWiki");
+
+    const pageID=
+
+    localStorage.getItem("wikihub_currentPage");
+
+    const wiki=
+
+    wikis.find(w=>w.id===wikiID);
+
+    if(!wiki){
+
+        alert("Wikiが見つかりません。");
+
+        return;
+
+    }
+
+    let page=
+
+    wiki.pages.find(p=>p.id===pageID);
+
+    if(!page){
+
+        page={
+
+            id:createPageID(),
+
+            title:"新しいページ",
+
+            content:"",
+
+            created:new Date().toISOString(),
+
+            updated:new Date().toISOString(),
+
+            category:"",
+
+            tags:[],
+
+            history:[]
+
+        };
+
+        wiki.pages.push(page);
+
+    }
+
+    page.title=
+
+    document.getElementById("pageTitleInput").value.trim();
+
+    page.content=
+
+    editor.value;
+
+    page.category=
+
+    document.getElementById("pageCategory").value.trim();
+
+    page.tags=
+
+    document.getElementById("pageTags")
+
+    .value
+
+    .split(",")
+
+    .map(t=>t.trim())
+
+    .filter(t=>t!="");
+
+    page.updated=
+
+    new Date().toISOString();
+
+    /*==============================
+      編集履歴
+    ==============================*/
+
+    page.history.push({
+
+        date:new Date().toISOString(),
+
+        content:page.content,
+
+        title:page.title,
+
+        editor:getSession()?.username || "guest"
+
+    });
+
+    wiki.statistics.pages=
+
+    wiki.pages.length;
+
+    wiki.statistics.edits++;
+
+    saveWikis();
+
+    localStorage.setItem(
+
+        "wikihub_currentPage",
+
+        page.id
+
+    );
+
+    showToast("保存しました！");
+
+}
+      /*==================================
+ 新しいページ
+==================================*/
+
+function createNewPage(){
+
+    loadWikis();
+
+    const wiki=
+
+    wikis.find(
+
+        w=>w.id===
+
+        localStorage.getItem(
+
+            "wikihub_currentWiki"
+
+        )
+
+    );
+
+    if(!wiki)return;
+
+    const page={
+
+        id:createPageID(),
+
+        title:"新しいページ",
+
+        content:"",
+
+        created:new Date().toISOString(),
+
+        updated:new Date().toISOString(),
+
+        category:"",
+
+        tags:[],
+
+        history:[]
+
+    };
+
+    wiki.pages.push(page);
+
+    saveWikis();
+
+    localStorage.setItem(
+
+        "wikihub_currentPage",
+
+        page.id
+
+    );
+
+    location.reload();
+
+}
+/*==================================
+ ページ削除
+==================================*/
+
+function deleteCurrentPage(){
+
+    if(!confirm("このページを削除しますか？")){
+
+        return;
+
+    }
+
+    loadWikis();
+
+    const wiki=
+
+    wikis.find(
+
+        w=>w.id===
+
+        localStorage.getItem(
+
+            "wikihub_currentWiki"
+
+        )
+
+    );
+
+    if(!wiki)return;
+
+    const id=
+
+    localStorage.getItem(
+
+        "wikihub_currentPage"
+
+    );
+
+    wiki.pages=
+
+    wiki.pages.filter(
+
+        p=>p.id!==id
+
+    );
+
+    wiki.statistics.pages=
+
+    wiki.pages.length;
+
+    saveWikis();
+
+    location.href="wiki.html";
+
+}
+/*==================================
+ 履歴
+==================================*/
+
+function openHistory(){
+
+    loadWikis();
+
+    const wiki=
+
+    wikis.find(
+
+        w=>w.id===
+
+        localStorage.getItem(
+
+            "wikihub_currentWiki"
+
+        )
+
+    );
+
+    if(!wiki)return;
+
+    const page=
+
+    wiki.pages.find(
+
+        p=>p.id===
+
+        localStorage.getItem(
+
+            "wikihub_currentPage"
+
+        )
+
+    );
+
+    if(!page)return;
+
+    console.table(page.history);
+
+}
+/*==================================
+ Part3-7c
+ 高度なエディター
+==================================*/
+
+/*==============================
+ 初期化
+==============================*/
+
+document.addEventListener("DOMContentLoaded",function(){
+
+    setupImageDrop();
+
+    setupTemplateButtons();
+
+    setupPreviewButton();
+
+});
+
+/*==============================
+ ドラッグ＆ドロップ
+==============================*/
+
+function setupImageDrop(){
+
+    if(!editor)return;
+
+    editor.addEventListener("dragover",function(e){
+
+        e.preventDefault();
+
+    });
+
+    editor.addEventListener("drop",function(e){
+
+        e.preventDefault();
+
+        const file=e.dataTransfer.files[0];
+
+        if(!file)return;
+
+        if(!file.type.startsWith("image/")){
+
+            alert("画像のみ追加できます。");
+
+            return;
+
+        }
+
+        const reader=new FileReader();
+
+        reader.onload=function(event){
+
+            insertText(
+
+                "\n[[File:"+file.name+"]]\n"
+
+            );
+
+            saveLocalImage(
+
+                file.name,
+
+                event.target.result
+
+            );
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+/*==============================
+ ローカル画像保存
+==============================*/
+
+function saveLocalImage(name,data){
+
+    let files=
+
+    JSON.parse(
+
+        localStorage.getItem(
+
+            "wikihub_files"
+
+        )
+
+    )||[];
+
+    files.push({
+
+        id:crypto.randomUUID(),
+
+        name:name,
+
+        type:"image",
+
+        data:data,
+
+        created:new Date().toISOString()
+
+    });
+
+    localStorage.setItem(
+
+        "wikihub_files",
+
+        JSON.stringify(files)
+
+    );
+
+}
+
+/*==============================
+ テンプレート
+==============================*/
+
+function setupTemplateButtons(){
+
+    const templates={
+
+        infobox:
+`{{Infobox
+|タイトル=
+|画像=
+|説明=
+}}`,
+
+        quote:
+`> 引用文`,
+
+        code:
+"```javascript\n\n```",
+
+        table:
+`{| class="wikitable"
+|-
+!項目
+!内容
+|-
+|A
+|B
+|}`
+
+    };
+
+    window.insertTemplate=function(type){
+
+        if(!templates[type])return;
+
+        insertText(
+
+            templates[type]
+
+        );
+
+    };
+
+}
+
+/*==============================
+ テキスト挿入
+==============================*/
+
+function insertText(text){
+
+    const start=
+
+    editor.selectionStart;
+
+    const end=
+
+    editor.selectionEnd;
+
+    editor.setRangeText(
+
+        text,
+
+        start,
+
+        end,
+
+        "end"
+
+    );
+
+    editor.focus();
+
+    updatePreview();
+
+}
+
+/*==============================
+ プレビュー切替
+==============================*/
+
+function setupPreviewButton(){
+
+    const button=
+
+    document.getElementById(
+
+        "previewButton"
+
+    );
+
+    if(!button)return;
+
+    button.onclick=function(){
+
+        preview.hidden=
+
+        !preview.hidden;
+
+    };
+
+}
+
+/*==============================
+ Fileタグ
+==============================*/
+
+function parseFiles(html){
+
+    let files=
+
+    JSON.parse(
+
+        localStorage.getItem(
+
+            "wikihub_files"
+
+        )
+
+    )||[];
+
+    files.forEach(function(file){
+
+        html=html.replaceAll(
+
+            "[[File:"+file.name+"]]",
+
+            `<img
+                src="${file.data}"
+                style="
+                    max-width:100%;
+                    border-radius:8px;
+                    margin:10px 0;
+                ">`
+
+        );
+
+    });
+
+    return html;
+
+}
+
+/*==============================
+ プレビュー更新
+==============================*/
+
+const oldPreview=updatePreview;
+
+updatePreview=function(){
+
+    let html=
+
+    parseWiki(editor.value);
+
+    html=parseFiles(html);
+
+    preview.innerHTML=html;
+
+}
+
+/*==============================
+ オートリカバリー
+==============================*/
+
+window.addEventListener(
+
+    "beforeunload",
+
+    function(){
+
+        localStorage.setItem(
+
+            "wikihub_recovery",
+
+            editor.value
+
+        );
+
+    }
+
+);
+
+function restoreRecovery(){
+
+    const draft=
+
+    localStorage.getItem(
+
+        "wikihub_recovery"
+
+    );
+
+    if(!draft)return;
+
+    if(confirm("前回の編集内容を復元しますか？")){
+
+        editor.value=draft;
+
+        updatePreview();
+
+    }
+
+}
