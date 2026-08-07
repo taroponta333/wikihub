@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Wiki管理 - WikiHub</title>
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+
+</head>
+<body>
+
+<header id="topBar">
+
+<div class="logo">
+🛠 Wiki管理ツール
+</div>
+
+<div class="accountArea">
+
+<button id="backupButton">
+💾 バックアップ
+</button>
+
+<button id="restoreButton">
+📂 復元
+</button>
+
+<button onclick="location.href='wiki.html'">
+⬅ Wikiへ戻る
+</button>
+
+</div>
+
+</header>
+
+<main>
+
+<aside id="leftMenu">
+
+<div class="panel">
+
+<h2>管理</h2>
+
+<button onclick="showPanel('users')">
+👤 ユーザー
+</button>
+
+<button onclick="showPanel('pages')">
+📄 ページ
+</button>
+
+<button onclick="showPanel('files')">
+🖼 ファイル
+</button>
+
+<button onclick="showPanel('categories')">
+📂 カテゴリ
+</button>
+
+<button onclick="showPanel('history')">
+📜 履歴
+</button>
+
+<button onclick="showPanel('settings')">
+⚙ 設定
+</button>
+
+</div>
+
+</aside>
+
+<section id="center">
+
+<div id="adminContent">
+
+<h1>Wiki管理ツール</h1>
+
+<p>
+
+左のメニューから管理したい項目を選択してください。
+
+</p>
+
+</div>
+
+</section>
+
+</main>
+
+<script src="js/wiki.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>
