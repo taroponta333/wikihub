@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Wiki記事一覧 - WikiHub</title>
+
+<link
+rel="stylesheet"
+href="style.css">
+
+</head>
+
+<body>
+
+<!--==========================
+ Header
+===========================-->
+
+<header>
+
+<div class="header-left">
+
+<h1>
+
+📚 WikiHub
+
+</h1>
+
+</div>
+
+<div class="search-area">
+
+<input
+
+type="text"
+
+id="searchInput"
+
+placeholder="記事を検索">
+
+<button
+
+onclick="searchPage()">
+
+🔍
+
+</button>
+
+</div>
+
+<div class="header-right">
+
+<button
+
+class="btn btn-primary"
+
+onclick="location.href='create-page.html?wiki='+currentWikiId">
+
+＋ 記事作成
+
+</button>
+
+</div>
+
+</header>
+
+<!--==========================
+ Main
+===========================-->
+
+<div id="app">
+
+<!--==========================
+ Left
+===========================-->
+
+<aside id="leftMenu">
+
+<div class="panel">
+
+<div class="panel-header">
+
+Wiki
+
+</div>
+
+<div class="panel-body">
+
+<h2 id="wikiTitle">
+
+読み込み中...
+
+</h2>
+
+<p id="wikiDescription">
+
+説明
+
+</p>
+
+<hr class="mt20 mb20">
+
+<button
+
+class="btn btn-secondary w100"
+
+onclick="goHome()">
+
+🏠 Wikiトップ
+
+</button>
+
+<button
+
+class="btn btn-secondary w100 mt10"
+
+onclick="createPageButton()">
+
+📄 新しい記事
+
+</button>
+
+</div>
+
+</div>
+
+<div class="panel mt20">
+
+<div class="panel-header">
+
+カテゴリ
+
+</div>
+
+<div
+
+class="panel-body"
+
+id="categoryList">
+
+読み込み中...
+
+</div>
+
+</div>
+
+</aside>
+
+<!--==========================
+ Center
+===========================-->
+
+<main id="center">
+
+<div class="panel">
+
+<div class="panel-header">
+
+📄 記事一覧
+
+</div>
+
+<div
+
+class="panel-body"
+
+id="pageList">
+
+<div class="loading"></div>
+
+</div>
+
+</div>
+
+</main>
+
+<!--==========================
+ Right
+===========================-->
+
+<aside id="rightMenu">
+
+<div class="panel">
+
+<div class="panel-header">
+
+統計
+
+</div>
+
+<div class="panel-body">
+
+<p>
+
+記事数
+
+</p>
+
+<h2 id="pageCount">
+
+0
+
+</h2>
+
+<hr class="mt20 mb20">
+
+<p>
+
+総閲覧数
+
+</p>
+
+<h2 id="totalViews">
+
+0
+
+</h2>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-header">
+
+最近更新
+
+</div>
+
+<div
+
+class="panel-body"
+
+id="recentPages">
+
+なし
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-header">
+
+人気記事
+
+</div>
+
+<div
+
+class="panel-body"
+
+id="popularPages">
+
+なし
+
+</div>
+
+</div>
+
+</aside>
+
+</div>
+
+<!--==========================
+ Footer
+===========================-->
+
+<footer>
+
+WikiHub v1.0
+
+</footer>
+
+<script src="wiki.js"></script>
+
+<script src="wiki-pages.js"></script>
+
+</body>
+
+</html>
