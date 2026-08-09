@@ -1356,12 +1356,54 @@ function toggleFavorite(){
    新規記事
 ========================================= */
 
+/* =========================================
+   新しい記事を作成
+========================================= */
+
 function createNewPage(){
+
+    /* Wikiが取得できているか確認 */
+
+    if(!currentWiki){
+
+        /*
+           念のためlocalStorageから再取得
+        */
+
+        const wikis = JSON.parse(
+
+            localStorage.getItem(
+                "wikihub_wikis"
+            )
+
+        ) || [];
+
+
+        const wikiId =
+            localStorage.getItem(
+                "wikihub_currentWiki"
+            );
+
+
+        currentWiki =
+            wikis.find(
+
+                w =>
+                    String(w.id) ===
+                    String(wikiId)
+
+            );
+
+    }
+
+
+    /* Wikiが本当に無い */
 
     if(!currentWiki){
 
         alert(
-            "Wiki情報がありません。"
+            "Wikiが見つかりません。\n" +
+            "先にWikiを開いてください。"
         );
 
         return;
@@ -1369,14 +1411,166 @@ function createNewPage(){
     }
 
 
-    location.href =
-        "create-page.html?wiki=" +
-        encodeURIComponent(
-            currentWiki.id
+    /* pages配列が無ければ作る */
+
+    if(!Array.isArray(currentWiki.pages)){
+
+        currentWiki.pages = [];
+
+    }
+
+
+    /* =====================================
+       新しい記事
+    ===================================== */
+
+    const now =
+        new Date().toISOString();
+
+
+    const page = {
+
+        id:
+            "page_" +
+            crypto.randomUUID(),
+
+        title:
+            "新しい記事",
+
+        content:
+            "",
+
+        category:
+            "",
+
+        tags:
+            [],
+
+        author:
+            getCurrentUsername(),
+
+        created:
+            now,
+
+        updated:
+            now,
+
+        views:
+            0,
+
+        stars:
+            0,
+
+        comments:
+            [],
+
+        history:
+            []
+
+    };
+
+
+    /* Wikiに追加 */
+
+    currentWiki.pages.push(page);
+
+
+    /* 統計更新 */
+
+    if(!currentWiki.statistics){
+
+        currentWiki.statistics = {
+
+            pages:0,
+
+            files:0,
+
+            edits:0,
+
+            members:1
+
+        };
+
+    }
+
+
+    currentWiki.statistics.pages =
+        currentWiki.pages.length;
+
+
+    /* Wiki保存 */
+
+    const wikis = JSON.parse(
+
+        localStorage.getItem(
+            "wikihub_wikis"
+        )
+
+    ) || [];
+
+
+    const wikiIndex =
+        wikis.findIndex(
+
+            w =>
+                String(w.id) ===
+                String(currentWiki.id)
+
         );
 
-}
 
+    if(wikiIndex === -1){
+
+        alert(
+            "Wikiの保存に失敗しました。"
+        );
+
+        return;
+
+    }
+
+
+    wikis[wikiIndex] =
+        currentWiki;
+
+
+    localStorage.setItem(
+
+        "wikihub_wikis",
+
+        JSON.stringify(wikis)
+
+    );
+
+
+    /* 現在の記事 */
+
+    localStorage.setItem(
+
+        "wikihub_currentWiki",
+
+        currentWiki.id
+
+    );
+
+
+    localStorage.setItem(
+
+        "wikihub_currentPage",
+
+        page.id
+
+    );
+
+
+    /* =====================================
+       エディターへ
+    ===================================== */
+
+    location.href =
+        "editor.html";
+
+}
 
 /* =========================================
    記事一覧
@@ -1557,5 +1751,47 @@ function formatDate(date){
     return d.toLocaleString(
         "ja-JP"
     );
+
+}
+
+/* =========================================
+   現在のユーザー名
+========================================= */
+
+function getCurrentUsername(){
+
+    try{
+
+        const session =
+            JSON.parse(
+
+                localStorage.getItem(
+                    "wikihub_session"
+                )
+
+            );
+
+
+        if(session){
+
+            return (
+                session.username ||
+                session.displayName ||
+                "guest"
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Session error:",
+            error
+        );
+
+    }
+
+
+    return "guest";
 
 }
