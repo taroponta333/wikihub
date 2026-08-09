@@ -45,6 +45,157 @@ function init(){
 
 }
 
+/* =========================================
+   WikiHub 保存用セッション処理
+========================================= */
+
+/**
+ * 現在のログインセッションを取得
+ */
+function getSession(){
+
+    const keys = [
+        "wikihub_session",
+        "wikihub_currentUser",
+        "currentUser",
+        "session"
+    ];
+
+    for(const key of keys){
+
+        try{
+
+            const raw =
+                localStorage.getItem(key);
+
+            if(!raw){
+                continue;
+            }
+
+            const data =
+                JSON.parse(raw);
+
+            if(data){
+                return data;
+            }
+
+        }catch(error){
+
+            console.warn(
+                "セッション解析失敗:",
+                key,
+                error
+            );
+
+        }
+
+    }
+
+    return null;
+}
+
+
+/**
+ * 現在のユーザー名を取得
+ */
+function getSessionUsername(){
+
+    const session = getSession();
+
+    if(!session){
+        return "guest";
+    }
+
+    return (
+        session.username ||
+        session.userName ||
+        session.name ||
+        session.displayName ||
+        "guest"
+    );
+
+}
+
+
+/**
+ * 現在のユーザーIDを取得
+ */
+function getSessionUserId(){
+
+    const session = getSession();
+
+    if(!session){
+        return null;
+    }
+
+    return (
+        session.id ||
+        session.userId ||
+        session.uid ||
+        null
+    );
+
+}
+
+
+/**
+ * 保存前のログイン確認
+ */
+function checkSession(){
+
+    const session = getSession();
+
+    if(!session){
+
+        alert(
+            "ログイン情報を取得できません。\n" +
+            "ログインし直してください。"
+        );
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+/**
+ * 記事保存用のユーザー情報
+ */
+function getEditorUser(){
+
+    const session = getSession();
+
+    if(!session){
+
+        return {
+            id: null,
+            username: "guest"
+        };
+
+    }
+
+    return {
+
+        id:
+            session.id ||
+            session.userId ||
+            session.uid ||
+            null,
+
+        username:
+            session.username ||
+            session.userName ||
+            session.name ||
+            session.displayName ||
+            "guest"
+
+    };
+
+}
+
 /*==============================
  ページ読込
 ==============================*/
