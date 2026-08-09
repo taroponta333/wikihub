@@ -67,74 +67,132 @@ function loadPages(){
 
 function renderPageList(list){
 
-    const box = document.getElementById("pageList");
+    const box =
+        document.getElementById(
+            "pageList"
+        );
 
-    if(list.length===0){
+
+    if(list.length === 0){
 
         box.innerHTML = `
-        <div class="empty">
 
-        記事がありません。<br>
+            <div class="empty">
 
-        最初の記事を作成しましょう！
+                記事がありません。
 
-        </div>
+                <br><br>
+
+                最初の記事を作成しましょう！
+
+            </div>
+
         `;
 
         return;
 
     }
 
+
     box.innerHTML = "";
 
-    list.forEach(page=>{
 
-        box.innerHTML += `
+    list.forEach(page => {
 
-        <div class="article-card hover-up">
+        const card =
+            document.createElement("div");
 
-            <div class="article-title">
 
-                ${page.icon ?
-                `<img src="${page.icon}" style="width:32px;height:32px;border-radius:8px;vertical-align:middle;margin-right:8px;">`
-                : "📄"}
+        card.className =
+            "article-card hover-up";
 
-                ${page.title}
+
+        card.innerHTML = `
+
+            <div
+                class="article-title"
+                style="cursor:pointer;"
+            >
+
+                ${page.icon
+
+                    ? `<img
+                        src="${escapeHtml(page.icon)}"
+                        style="
+                            width:32px;
+                            height:32px;
+                            border-radius:8px;
+                            object-fit:cover;
+                            vertical-align:middle;
+                            margin-right:8px;
+                        "
+                    >`
+
+                    : "📄"
+                }
+
+                ${escapeHtml(page.title)}
 
             </div>
+
 
             <div class="article-info">
 
-                <span>👤 ${page.author}</span>
+                <span>
+                    👤 ${escapeHtml(
+                        page.author || "不明"
+                    )}
+                </span>
 
-                <span>📂 ${page.category||"なし"}</span>
+                <span>
+                    📂 ${escapeHtml(
+                        page.category || "なし"
+                    )}
+                </span>
 
-                <span>👁 ${page.views}</span>
+                <span>
+                    👁 ${page.views || 0}
+                </span>
 
-                <span>⭐ ${page.stars}</span>
+                <span>
+                    ⭐ ${page.stars || 0}
+                </span>
 
             </div>
 
+
             <button
+                class="btn btn-primary"
+                onclick="openPage('${page.id}')">
 
-            class="btn btn-primary"
-
-            onclick="openPage(${page.id})">
-
-            開く
+                📖 開く
 
             </button>
 
-        </div>
-
-        <br>
-
         `;
+
+
+        card
+            .querySelector(".article-title")
+            .onclick = function(){
+
+                openPage(page.id);
+
+            };
+
+
+        box.appendChild(card);
+
+
+        const spacer =
+            document.createElement("br");
+
+
+        box.appendChild(spacer);
 
     });
 
 }
-
 /*========================================
  開く
 ========================================*/
