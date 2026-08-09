@@ -1,13 +1,6 @@
-/* =========================================================
-   WikiHub
-   style.css
-   WikiHub 共通UI + wiki-pages.html対応版
-========================================================= */
-
-
-/* =========================================================
-   Reset
-========================================================= */
+/* ==========================
+   WikiHub Style
+========================== */
 
 *{
     margin:0;
@@ -15,62 +8,23 @@
     box-sizing:border-box;
 }
 
-html{
-    scroll-behavior:smooth;
-}
-
 body{
-    min-height:100vh;
-
-    font-family:
-        "Yu Gothic UI",
-        "Yu Gothic",
-        "Meiryo",
-        sans-serif;
-
-    background:#f5f6f7;
-
+    font-family:"Yu Gothic UI","Meiryo",sans-serif;
+    background:#f6f6f6;
     color:#202122;
-
-    line-height:1.6;
 }
 
-button,
-input,
-textarea,
-select{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
-
-a{
-    color:#36c;
-    text-decoration:none;
-}
-
-a:hover{
-    text-decoration:underline;
-}
-
-
-/* =========================================================
+/* ==========================
    Header
-   wiki-pages.html
-========================================================= */
+========================== */
 
-header,
 #topBar{
 
-    min-height:64px;
-
-    width:100%;
+    height:65px;
 
     background:#202122;
 
-    color:#fff;
+    color:white;
 
     display:flex;
 
@@ -78,45 +32,16 @@ header,
 
     justify-content:space-between;
 
-    gap:20px;
-
-    padding:10px 20px;
+    padding:0 20px;
 
     position:sticky;
 
     top:0;
 
-    z-index:9999;
+    z-index:999;
 
-    box-shadow:
-        0 2px 8px
-        rgba(0,0,0,.25);
-}
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
 
-
-/* =========================================================
-   Header Left
-========================================================= */
-
-.header-left,
-.logo{
-
-    display:flex;
-
-    align-items:center;
-
-    flex-shrink:0;
-}
-
-.header-left h1{
-
-    font-size:28px;
-
-    line-height:1;
-
-    font-weight:700;
-
-    white-space:nowrap;
 }
 
 .logo{
@@ -125,312 +50,132 @@ header,
 
     font-weight:bold;
 
-    white-space:nowrap;
 }
 
 .logo span{
+
     margin-left:8px;
+
 }
 
-
-/* =========================================================
-   Search
-========================================================= */
-
-.search-area,
 .searchArea{
 
     display:flex;
 
-    align-items:stretch;
+    width:40%;
 
-    width:min(650px,45vw);
-
-    min-width:240px;
-
-    margin:0 auto;
 }
 
-.search-area input,
-.searchArea input,
 #searchBox{
 
     flex:1;
 
-    min-width:0;
-
-    height:42px;
-
-    padding:
-        8px
-        14px;
-
-    border:1px solid #a2a9b1;
-
-    border-right:none;
-
-    background:#fff;
-
-    color:#202122;
-
-    outline:none;
-
-    font-size:15px;
-
-    border-radius:
-        7px
-        0
-        0
-        7px;
-}
-
-.search-area input:focus,
-.searchArea input:focus,
-#searchBox:focus{
-
-    border-color:#36c;
-
-    box-shadow:
-        0 0 0 2px
-        rgba(51,102,204,.18);
-}
-
-.search-area button,
-.searchArea button,
-#searchButton{
-
-    width:58px;
-
-    height:42px;
+    padding:10px;
 
     border:none;
 
+    border-radius:8px 0 0 8px;
+
+    font-size:16px;
+
+}
+
+#searchButton{
+
+    padding:10px 18px;
+
+    border:none;
+
+    cursor:pointer;
+
     background:#36c;
 
-    color:#fff;
+    color:white;
 
-    border-radius:
-        0
-        7px
-        7px
-        0;
+    border-radius:0 8px 8px 0;
 
     font-size:18px;
 
-    transition:
-        background .15s ease,
-        transform .1s ease;
 }
 
-.search-area button:hover,
-.searchArea button:hover,
 #searchButton:hover{
 
     background:#447ff5;
+
 }
 
-.search-area button:active,
-.searchArea button:active,
-#searchButton:active{
-
-    transform:scale(.97);
-}
-
-
-/* =========================================================
-   Header Right
-========================================================= */
-
-.header-right,
 .accountArea{
 
     display:flex;
 
-    align-items:center;
-
-    gap:8px;
-
-    flex-shrink:0;
-}
-
-.accountArea button,
-.header-right button{
-
-    white-space:nowrap;
-}
-
-
-/* =========================================================
-   Buttons
-========================================================= */
-
-.btn{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:5px;
-
-    min-height:38px;
-
-    padding:
-        7px
-        14px;
-
-    border:1px solid transparent;
-
-    border-radius:7px;
-
-    font-weight:600;
-
-    line-height:1.3;
-
-    transition:
-        background .15s ease,
-        border-color .15s ease,
-        box-shadow .15s ease,
-        transform .1s ease;
+    gap:10px;
 
 }
 
-.btn:hover{
-    text-decoration:none;
-}
+.accountArea button{
 
-.btn:active{
-    transform:translateY(1px);
-}
+    padding:10px 18px;
 
-.btn-primary{
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
 
     background:#36c;
 
-    color:#fff;
+    color:white;
 
-    border-color:#36c;
+    font-size:15px;
+
 }
 
-.btn-primary:hover{
+.accountArea button:hover{
 
     background:#447ff5;
 
-    border-color:#447ff5;
 }
 
-.btn-secondary{
-
-    background:#f8f9fa;
-
-    color:#202122;
-
-    border-color:#a2a9b1;
-}
-
-.btn-secondary:hover{
-
-    background:#eaecf0;
-
-    border-color:#72777d;
-}
-
-.btn-danger{
-
-    background:#d33;
-
-    color:#fff;
-
-    border-color:#d33;
-}
-
-.btn-danger:hover{
-
-    background:#b32424;
-}
-
-.btn-small{
-
-    min-height:32px;
-
-    padding:
-        5px
-        10px;
-
-    font-size:13px;
-}
-
-
-/* =========================================================
-   Utility
-========================================================= */
-
-.w100{
-    width:100%;
-}
-
-.mt10{
-    margin-top:10px;
-}
-
-.mt20{
-    margin-top:20px;
-}
-
-.mb10{
-    margin-bottom:10px;
-}
-
-.mb20{
-    margin-bottom:20px;
-}
-
-
-/* =========================================================
-   Wiki Pages Main Layout
-========================================================= */
-
-#app{
-
-    width:100%;
-
-    max-width:1500px;
-
-    margin:0 auto;
-
-    padding:20px;
-
-    display:grid;
-
-    grid-template-columns:
-        250px
-        minmax(0,1fr)
-        300px;
-
-    gap:20px;
-
-    align-items:start;
-}
-
-
-/* =========================================================
-   Generic Main
-========================================================= */
+/* ==========================
+   Main Layout
+========================== */
 
 main{
 
-    min-width:0;
+    display:grid;
+
+    grid-template-columns:240px 1fr 300px;
+
+    gap:20px;
+
+    padding:20px;
+
 }
 
-
-/* =========================================================
+/* ==========================
    Left Menu
-========================================================= */
+========================== */
 
 #leftMenu{
 
-    min-width:0;
+    background:white;
+
+    border:1px solid #c8ccd1;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    height:fit-content;
+
+}
+
+#leftMenu h2{
+
+    margin-bottom:15px;
+
+    color:#36c;
+
 }
 
 #leftMenu nav{
@@ -439,461 +184,56 @@ main{
 
     flex-direction:column;
 
-    gap:5px;
 }
 
 #leftMenu a{
 
-    display:block;
-
-    padding:9px 10px;
+    text-decoration:none;
 
     color:#202122;
 
-    border-radius:7px;
+    padding:10px;
 
-    transition:
-        background .15s ease;
+    border-radius:8px;
+
+    margin-bottom:5px;
+
+    transition:.2s;
+
 }
 
 #leftMenu a:hover{
 
     background:#eaecf0;
 
-    text-decoration:none;
 }
 
+/* ==========================
+   Center
+========================== */
 
-/* =========================================================
-   Right Menu
-========================================================= */
-
-#rightMenu{
-
-    min-width:0;
+#center{
 
     display:flex;
 
     flex-direction:column;
 
     gap:20px;
+
 }
-
-
-/* =========================================================
-   Panels
-========================================================= */
-
-.panel{
-
-    width:100%;
-
-    background:#fff;
-
-    border:
-        1px solid
-        #c8ccd1;
-
-    border-radius:10px;
-
-    overflow:hidden;
-
-    box-shadow:
-        0 1px 2px
-        rgba(0,0,0,.04);
-}
-
-.panel-header{
-
-    padding:
-        13px
-        16px;
-
-    background:#fff;
-
-    color:#36c;
-
-    font-size:18px;
-
-    font-weight:700;
-
-    border-bottom:
-        1px solid
-        #eaecf0;
-}
-
-.panel-body{
-
-    padding:16px;
-
-    min-width:0;
-}
-
-
-/* =========================================================
-   Wiki Info
-========================================================= */
-
-#wikiTitle{
-
-    color:#36c;
-
-    font-size:25px;
-
-    line-height:1.3;
-
-    margin-bottom:8px;
-
-    word-break:break-word;
-}
-
-#wikiDescription{
-
-    color:#54595d;
-
-    word-break:break-word;
-}
-
-
-/* =========================================================
-   Category
-========================================================= */
-
-#categoryList{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:7px;
-}
-
-.category-button{
-
-    width:100%;
-
-    padding:
-        8px
-        10px;
-
-    border:
-        1px solid
-        #c8ccd1;
-
-    border-radius:7px;
-
-    background:#f8f9fa;
-
-    color:#202122;
-
-    text-align:left;
-
-    transition:
-        background .15s ease,
-        border-color .15s ease,
-        transform .1s ease;
-}
-
-.category-button:hover{
-
-    background:#eaecf0;
-
-    border-color:#a2a9b1;
-}
-
-.category-button:active{
-
-    transform:translateY(1px);
-}
-
-
-/* =========================================================
-   Article List
-========================================================= */
-
-#pageList{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:12px;
-
-    min-height:100px;
-}
-
-
-/* =========================================================
-   Article Card
-========================================================= */
-
-.article-card{
-
-    width:100%;
-
-    padding:16px;
-
-    background:#fff;
-
-    border:
-        1px solid
-        #c8ccd1;
-
-    border-radius:9px;
-
-    transition:
-        transform .15s ease,
-        box-shadow .15s ease,
-        border-color .15s ease;
-}
-
-.article-card:hover{
-
-    transform:translateY(-2px);
-
-    border-color:#a2a9b1;
-
-    box-shadow:
-        0 4px 12px
-        rgba(0,0,0,.10);
-}
-
-.article-title{
-
-    color:#36c;
-
-    font-size:20px;
-
-    font-weight:700;
-
-    line-height:1.4;
-
-    margin-bottom:8px;
-
-    word-break:break-word;
-}
-
-.article-title:hover{
-
-    color:#447ff5;
-}
-
-.article-info{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:8px 15px;
-
-    color:#54595d;
-
-    font-size:13px;
-
-    margin-bottom:8px;
-}
-
-.article-updated{
-
-    color:#72777d;
-
-    font-size:12px;
-
-    margin-bottom:10px;
-}
-
-.article-actions{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:7px;
-
-    padding-top:5px;
-}
-
-
-/* =========================================================
-   Empty
-========================================================= */
-
-.empty{
-
-    padding:45px 20px;
-
-    text-align:center;
-
-    color:#54595d;
-
-    border:
-        1px dashed
-        #a2a9b1;
-
-    border-radius:8px;
-
-    background:#f8f9fa;
-}
-
-
-/* =========================================================
-   Loading
-========================================================= */
-
-.loading{
-
-    width:34px;
-
-    height:34px;
-
-    margin:25px auto;
-
-    border:
-        4px solid
-        #eaecf0;
-
-    border-top-color:#36c;
-
-    border-radius:50%;
-
-    animation:
-        wikiHubSpin
-        .8s linear infinite;
-}
-
-@keyframes wikiHubSpin{
-
-    from{
-        transform:rotate(0deg);
-    }
-
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-
-/* =========================================================
-   Search Status
-========================================================= */
-
-#searchStatus{
-
-    margin-bottom:12px;
-
-    padding:
-        8px
-        12px;
-
-    border-radius:7px;
-
-    background:#eaecf0;
-
-    color:#54595d;
-
-    font-size:14px;
-}
-
-
-/* =========================================================
-   Statistics
-========================================================= */
-
-#rightMenu h2{
-
-    color:#36c;
-
-    font-size:28px;
-
-    margin-bottom:5px;
-}
-
-#rightMenu p{
-
-    color:#54595d;
-
-    margin-bottom:2px;
-}
-
-#rightMenu hr{
-
-    border:none;
-
-    border-top:
-        1px solid
-        #eaecf0;
-}
-
-
-/* =========================================================
-   Recent / Popular
-========================================================= */
-
-#recentPages,
-#popularPages{
-
-    line-height:1.6;
-}
-
-#recentPages div,
-#popularPages div{
-
-    padding:
-        6px
-        0;
-
-    border-bottom:
-        1px solid
-        #eaecf0;
-}
-
-#recentPages div:last-child,
-#popularPages div:last-child{
-
-    border-bottom:none;
-}
-
-
-/* =========================================================
-   Footer
-========================================================= */
-
-footer{
-
-    width:100%;
-
-    margin-top:20px;
-
-    padding:20px;
-
-    background:#202122;
-
-    color:#fff;
-
-    text-align:center;
-
-    font-size:13px;
-}
-
-
-/* =========================================================
-   Generic WikiHub Components
-   index.html / wiki.html 等との互換
-========================================================= */
 
 .welcome,
 .wikiList,
 .recent{
 
-    background:#fff;
+    background:white;
 
-    border:
-        1px solid
-        #c8ccd1;
+    border:1px solid #c8ccd1;
 
     border-radius:10px;
 
     padding:20px;
+
 }
 
 .welcome h1{
@@ -901,21 +241,21 @@ footer{
     color:#36c;
 
     margin-bottom:15px;
+
 }
 
 .wikiList h2,
 .recent h2{
 
     margin-bottom:15px;
+
 }
 
 .wikiCard{
 
     background:#f8f9fa;
 
-    border:
-        1px solid
-        #c8ccd1;
+    border:1px solid #c8ccd1;
 
     border-radius:10px;
 
@@ -925,275 +265,146 @@ footer{
 
     cursor:pointer;
 
-    transition:
-        transform .15s ease,
-        box-shadow .15s ease;
+    transition:.2s;
+
+    font-size:18px;
+
 }
 
 .wikiCard:hover{
 
     transform:translateY(-2px);
 
-    box-shadow:
-        0 4px 10px
-        rgba(0,0,0,.15);
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+
 }
 
+.recent ul{
 
-/* =========================================================
-   Tables
-========================================================= */
+    margin-left:20px;
 
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
 }
 
-th,
-td{
+.recent li{
 
-    padding:9px;
+    margin-bottom:10px;
 
-    border:
-        1px solid
-        #c8ccd1;
-
-    text-align:left;
 }
 
-th{
+/* ==========================
+   Right Menu
+========================== */
 
-    background:#eaecf0;
+#rightMenu{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
 }
 
+.panel{
 
-/* =========================================================
-   Forms
-========================================================= */
+    background:white;
 
-input,
-textarea,
-select{
+    border:1px solid #c8ccd1;
 
-    max-width:100%;
+    border-radius:10px;
+
+    padding:15px;
+
 }
 
-textarea{
+.panel h2{
 
-    resize:vertical;
+    margin-bottom:12px;
+
+    color:#36c;
+
 }
 
+.panel li{
 
-/* =========================================================
+    margin-bottom:8px;
+
+}
+
+/* ==========================
+   Footer
+========================== */
+
+footer{
+
+    margin-top:20px;
+
+    background:#202122;
+
+    color:white;
+
+    text-align:center;
+
+    padding:20px;
+
+}
+
+/* ==========================
    Responsive
-========================================================= */
+========================== */
 
 @media(max-width:1100px){
 
-    #app{
+main{
 
-        grid-template-columns:
-            220px
-            minmax(0,1fr);
-
-    }
-
-    #rightMenu{
-
-        display:none;
-    }
-
-    .search-area,
-    .searchArea{
-
-        width:min(500px,40vw);
-    }
+grid-template-columns:220px 1fr;
 
 }
 
+#rightMenu{
+
+display:none;
+
+}
+
+}
 
 @media(max-width:800px){
 
-    header,
-    #topBar{
+#topBar{
 
-        min-height:auto;
+flex-direction:column;
 
-        flex-wrap:wrap;
+height:auto;
 
-        padding:
-            12px
-            14px;
+padding:15px;
 
-        gap:10px;
-    }
-
-    .header-left{
-
-        width:auto;
-    }
-
-    .header-left h1{
-
-        font-size:23px;
-    }
-
-    .logo{
-
-        font-size:23px;
-    }
-
-    .search-area,
-    .searchArea{
-
-        order:3;
-
-        width:100%;
-
-        min-width:0;
-
-        flex-basis:100%;
-
-        margin:0;
-    }
-
-    .header-right,
-    .accountArea{
-
-        margin-left:auto;
-    }
-
-    #app{
-
-        display:grid;
-
-        grid-template-columns:1fr;
-
-        padding:12px;
-
-        gap:12px;
-    }
-
-    #leftMenu{
-
-        order:2;
-    }
-
-    #center{
-
-        order:1;
-    }
-
-    #rightMenu{
-
-        display:flex;
-
-        order:3;
-
-        gap:12px;
-    }
-
-    .panel-body{
-
-        padding:13px;
-    }
-
-    .article-title{
-
-        font-size:18px;
-    }
+gap:15px;
 
 }
 
+.searchArea{
 
-@media(max-width:500px){
+width:100%;
 
-    header,
-    #topBar{
+}
 
-        padding:10px;
-    }
+main{
 
-    .header-left h1{
+grid-template-columns:1fr;
 
-        font-size:20px;
-    }
+}
 
-    .logo{
+#leftMenu{
 
-        font-size:20px;
-    }
+order:2;
 
-    .header-right .btn{
+}
 
-        min-height:34px;
+#center{
 
-        padding:
-            6px
-            9px;
+order:1;
 
-        font-size:13px;
-    }
-
-    .search-area input,
-    .searchArea input,
-    #searchBox{
-
-        height:40px;
-
-        font-size:14px;
-    }
-
-    .search-area button,
-    .searchArea button,
-    #searchButton{
-
-        height:40px;
-
-        width:50px;
-    }
-
-    #app{
-
-        padding:8px;
-    }
-
-    .panel-header{
-
-        font-size:16px;
-
-        padding:
-            11px
-            13px;
-    }
-
-    .panel-body{
-
-        padding:11px;
-    }
-
-    .article-card{
-
-        padding:12px;
-    }
-
-    .article-info{
-
-        flex-direction:column;
-
-        gap:3px;
-    }
-
-    .article-actions{
-
-        width:100%;
-    }
-
-    .article-actions .btn{
-
-        flex:1;
-    }
+}
 
 }
