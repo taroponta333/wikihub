@@ -3,287 +3,457 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Wiki記事一覧 - WikiHub</title>
+    <title>Wiki記事一覧 - WikiHub</title>
 
-<link
-rel="stylesheet"
-href="css/style.css">
+    <!-- WikiHub 共通CSS -->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <!-- Wiki用CSS -->
+    <link
+        rel="stylesheet"
+        href="css/wiki.css"
+    >
 
 </head>
 
+
 <body>
 
-<!--==========================
- Header
-===========================-->
+
+<!-- ========================================
+     Header
+======================================== -->
 
 <header>
 
-<div class="header-left">
+    <div class="header-left">
 
-<h1>
+        <h1>
 
-📚 WikiHub
+            <a
+                href="index.html"
+                style="color:inherit;text-decoration:none;"
+            >
+                📚 WikiHub
+            </a>
 
-</h1>
+        </h1>
 
-</div>
+    </div>
 
-<div class="search-area">
 
-<input
+    <div class="search-area">
 
-type="text"
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="記事を検索..."
+            autocomplete="off"
+        >
 
-id="searchInput"
+        <button
+            type="button"
+            id="searchButton"
+        >
+            🔍
+        </button>
 
-placeholder="記事を検索">
+    </div>
 
-<button
 
-onclick="searchPage()">
+    <div class="header-right">
 
-🔍
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="createPageHeaderButton"
+        >
+            ＋ 記事作成
+        </button>
 
-</button>
-
-</div>
-
-<div class="header-right">
-
-<button
-
-class="btn btn-primary"
-
-onclick="location.href='create-page.html?wiki='+currentWikiId">
-
-＋ 記事作成
-
-</button>
-
-</div>
+    </div>
 
 </header>
 
-<!--==========================
- Main
-===========================-->
+
+
+<!-- ========================================
+     Main
+======================================== -->
 
 <div id="app">
 
-<!--==========================
- Left
-===========================-->
 
-<aside id="leftMenu">
+    <!-- ====================================
+         Left
+    ===================================== -->
 
-<div class="panel">
+    <aside id="leftMenu">
 
-<div class="panel-header">
 
-Wiki
+        <!-- Wiki情報 -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                Wiki
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <h2 id="wikiTitle">
+
+                    読み込み中...
+
+                </h2>
+
+
+                <p id="wikiDescription">
+
+                    Wikiの説明を読み込んでいます...
+
+                </p>
+
+
+                <hr
+                    class="mt20 mb20"
+                >
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary w100"
+                    id="wikiHomeButton"
+                >
+                    🏠 Wikiトップ
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-secondary w100 mt10"
+                    id="createPageButton"
+                >
+                    📄 新しい記事
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- カテゴリ -->
+
+        <div class="panel mt20">
+
+            <div class="panel-header">
+
+                📂 カテゴリ
+
+            </div>
+
+
+            <div
+                class="panel-body"
+                id="categoryList"
+            >
+
+                <div class="loading">
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- ====================================
+         Center
+    ===================================== -->
+
+    <main id="center">
+
+
+        <div class="panel">
+
+
+            <div class="panel-header">
+
+                <span>
+                    📄 記事一覧
+                </span>
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <!-- 一覧上部 -->
+
+                <div
+                    id="pageListToolbar"
+                    style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:space-between;
+                        gap:10px;
+                        flex-wrap:wrap;
+                        margin-bottom:15px;
+                    "
+                >
+
+                    <div>
+
+                        <strong id="pageListTitle">
+                            すべての記事
+                        </strong>
+
+                        <span
+                            id="pageListCount"
+                            style="margin-left:8px;color:#777;"
+                        >
+                            0件
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            display:flex;
+                            gap:6px;
+                            flex-wrap:wrap;
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            id="sortUpdatedButton"
+                        >
+                            🕒 更新順
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            id="sortTitleButton"
+                        >
+                            🔤 名前順
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- 検索状態 -->
+
+                <div
+                    id="searchStatus"
+                    style="
+                        display:none;
+                        margin-bottom:15px;
+                        padding:10px;
+                        border-radius:6px;
+                        background:#f0f4ff;
+                    "
+                >
+                </div>
+
+
+
+                <!-- 記事一覧 -->
+
+                <div id="pageList">
+
+                    <div class="loading">
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- ====================================
+         Right
+    ===================================== -->
+
+    <aside id="rightMenu">
+
+
+        <!-- 統計 -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                📊 統計
+
+            </div>
+
+
+            <div class="panel-body">
+
+
+                <p>
+                    記事数
+                </p>
+
+
+                <h2 id="pageCount">
+
+                    0
+
+                </h2>
+
+
+                <hr
+                    class="mt20 mb20"
+                >
+
+
+                <p>
+                    総閲覧数
+                </p>
+
+
+                <h2 id="totalViews">
+
+                    0
+
+                </h2>
+
+
+                <hr
+                    class="mt20 mb20"
+                >
+
+
+                <p>
+                    総編集数
+                </p>
+
+
+                <h2 id="totalEdits">
+
+                    0
+
+                </h2>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- 最近更新 -->
+
+        <div class="panel mt20">
+
+            <div class="panel-header">
+
+                🕒 最近更新
+
+            </div>
+
+
+            <div
+                class="panel-body"
+                id="recentPages"
+            >
+
+                なし
+
+            </div>
+
+        </div>
+
+
+
+        <!-- 人気記事 -->
+
+        <div class="panel mt20">
+
+            <div class="panel-header">
+
+                🔥 人気記事
+
+            </div>
+
+
+            <div
+                class="panel-body"
+                id="popularPages"
+            >
+
+                なし
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
 
 </div>
 
-<div class="panel-body">
 
-<h2 id="wikiTitle">
 
-読み込み中...
-
-</h2>
-
-<p id="wikiDescription">
-
-説明
-
-</p>
-
-<hr class="mt20 mb20">
-
-<button
-
-class="btn btn-secondary w100"
-
-onclick="goHome()">
-
-🏠 Wikiトップ
-
-</button>
-
-<button
-
-class="btn btn-secondary w100 mt10"
-
-onclick="createPageButton()">
-
-📄 新しい記事
-
-</button>
-
-</div>
-
-</div>
-
-<div class="panel mt20">
-
-<div class="panel-header">
-
-カテゴリ
-
-</div>
-
-<div
-
-class="panel-body"
-
-id="categoryList">
-
-読み込み中...
-
-</div>
-
-</div>
-
-</aside>
-
-<!--==========================
- Center
-===========================-->
-
-<main id="center">
-
-<div class="panel">
-
-<div class="panel-header">
-
-📄 記事一覧
-
-</div>
-
-<div
-
-class="panel-body"
-
-id="pageList">
-
-<div class="loading"></div>
-
-</div>
-
-</div>
-
-</main>
-
-<!--==========================
- Right
-===========================-->
-
-<aside id="rightMenu">
-
-<div class="panel">
-
-<div class="panel-header">
-
-統計
-
-</div>
-
-<div class="panel-body">
-
-<p>
-
-記事数
-
-</p>
-
-<h2 id="pageCount">
-
-0
-
-</h2>
-
-<hr class="mt20 mb20">
-
-<p>
-
-総閲覧数
-
-</p>
-
-<h2 id="totalViews">
-
-0
-
-</h2>
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="panel-header">
-
-最近更新
-
-</div>
-
-<div
-
-class="panel-body"
-
-id="recentPages">
-
-なし
-
-</div>
-
-</div>
-
-<div class="panel">
-
-<div class="panel-header">
-
-人気記事
-
-</div>
-
-<div
-
-class="panel-body"
-
-id="popularPages">
-
-なし
-
-</div>
-
-</div>
-
-</aside>
-
-</div>
-
-<!--==========================
- Footer
-===========================-->
+<!-- ========================================
+     Footer
+======================================== -->
 
 <footer>
 
-WikiHub v1.0
+    WikiHub v1.0
 
 </footer>
+
+
+
+<!-- ========================================
+     JavaScript
+     ※インラインJSなし
+======================================== -->
 
 <script src="wiki.js"></script>
 
 <script src="wiki-pages.js"></script>
+
 
 </body>
 
