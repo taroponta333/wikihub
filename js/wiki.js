@@ -1052,6 +1052,87 @@ function createMainPage(
     );
 
 }
+
+/*==================================
+ Wiki取得
+==================================*/
+
+function getWiki(wikiId){
+
+    const data =
+        localStorage.getItem(
+            "wikihub_wikis"
+        );
+
+    if(!data){
+        return null;
+    }
+
+    const list =
+        JSON.parse(data);
+
+    return list.find(
+
+        wiki =>
+            String(wiki.id) ===
+            String(wikiId)
+
+    ) || null;
+
+}
+
+
+/*==================================
+ Wiki保存
+==================================*/
+
+function saveWiki(wiki){
+
+    const data =
+        localStorage.getItem(
+            "wikihub_wikis"
+        );
+
+    const list =
+        data
+        ? JSON.parse(data)
+        : [];
+
+
+    const index =
+        list.findIndex(
+
+            item =>
+                String(item.id) ===
+                String(wiki.id)
+
+        );
+
+
+    if(index === -1){
+
+        list.push(wiki);
+
+    }else{
+
+        list[index] = wiki;
+
+    }
+
+
+    localStorage.setItem(
+
+        "wikihub_wikis",
+
+        JSON.stringify(list)
+
+    );
+
+
+    return wiki;
+
+}
+
 function getWikiPages(
 
     wikiId
