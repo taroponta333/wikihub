@@ -1763,6 +1763,66 @@ function formatDate(value){
 
 }
 
+/*==================================
+ プロフィール編集ボタン
+==================================*/
+
+function setupEditProfileButton(){
+
+    const button =
+        document.getElementById(
+            "editProfile"
+        );
+
+    if(!button){
+
+        return;
+
+    }
+
+    if(
+        button.dataset.bound ===
+        "1"
+    ){
+
+        return;
+
+    }
+
+    button.dataset.bound =
+        "1";
+
+    button.addEventListener(
+        "click",
+        function(){
+
+            const user =
+                getCurrentUser();
+
+            if(!user){
+
+                alert(
+                    "ログインしてください。"
+                );
+
+                location.href =
+                    "login.html";
+
+                return;
+
+            }
+
+            /*
+             * 編集ページへ移動
+             */
+
+            location.href =
+                "profile-edit.html";
+
+        }
+    );
+
+}
 
 /*==================================
  外部から使えるAPI
