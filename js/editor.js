@@ -46,6 +46,270 @@ function init(){
 }
 
 /* =========================================
+   編集モード
+========================================= */
+
+const editorParams =
+    new URLSearchParams(
+        location.search
+    );
+
+const editMode =
+    editorParams.get("edit") === "1";
+
+const editPageId =
+    editorParams.get("id");
+
+/* =========================================
+   編集対象の記事を取得
+========================================= */
+
+function getPageForEdit(){
+
+    if(!editMode || !editPageId){
+
+        return null;
+
+    }
+
+
+    const wikis =
+        JSON.parse(
+            localStorage.getItem(
+                "wikihub_wikis"
+            )
+        ) || [];
+
+
+    /* Wikiを検索 */
+
+    const currentWikiId =
+        localStorage.getItem(
+            "wikihub_currentWiki"
+        );
+
+
+    let wiki =
+        wikis.find(
+
+            w =>
+                String(w.id) ===
+                String(currentWikiId)
+
+        );
+
+
+    /* Wikiが見つからなければ
+       全Wikiから記事を検索 */
+
+    if(!wiki){
+
+        for(const w of wikis){
+
+            if(!Array.isArray(w.pages)){
+                continue;
+            }
+
+
+            const found =
+                w.pages.find(
+
+                    p =>
+                        String(p.id) ===
+                        String(editPageId)
+
+                );
+
+
+            if(found){
+
+                wiki = w;
+                break;
+
+            }
+
+        }
+
+    }
+
+
+    if(!wiki){
+
+        return null;
+
+    }
+
+
+    if(!Array.isArray(wiki.pages)){
+
+        return null;
+
+    }
+
+
+    return {
+
+        wiki: wiki,
+
+        page:
+            wiki.pages.find(
+
+                p =>
+                    String(p.id) ===
+                    String(editPageId)
+
+            ) || null
+
+    };
+
+}
+
+/* =========================================
+   編集記事をフォームへ読み込む
+========================================= */
+
+function loadPageForEdit(){
+
+    if(!editMode){
+
+        return;
+
+    }
+
+
+    const result =
+        getPageForEdit();
+
+
+    if(!result || !result.page){
+
+        alert(
+            "編集する記事が見つかりません。"
+        );
+
+        return;
+
+    }
+
+
+    const page =
+        result.page;
+
+
+    /* 現在のWiki・記事を保存 */
+
+    localStorage.setItem(
+        "wikihub_currentWiki",
+        String(result.wiki.id)
+    );
+
+    localStorage.setItem(
+        "wikihub_currentPage",
+        String(page.id)
+    );
+
+
+    /* タイトル */
+
+    const titleInput =
+        document.getElementById(
+            "pageTitle"
+        );
+
+    if(titleInput){
+
+        titleInput.value =
+            page.title || "";
+
+    }
+
+
+    /* 本文 */
+
+    const contentInput =
+        document.getElementById(
+            "pageContent"
+        );
+
+    if(contentInput){
+
+        contentInput.value =
+            page.content || "";
+
+    }
+
+
+    /* カテゴリ */
+
+    const categoryInput =
+        document.getElementById(
+            "pageCategory"
+        );
+
+    if(categoryInput){
+
+        categoryInput.value =
+            page.category || "";
+
+    }
+
+
+    /* タグ */
+
+    const tagsInput =
+        document.getElementById(
+            "pageTags"
+        );
+
+    if(tagsInput){
+
+        if(Array.isArray(page.tags)){
+
+            tagsInput.value =
+                page.tags.join(", ");
+
+        }else{
+
+            tagsInput.value =
+                page.tags || "";
+
+        }
+
+    }
+
+
+    /* 編集中の記事ID */
+
+    const hiddenId =
+        document.getElementById(
+            "pageId"
+        );
+
+    if(hiddenId){
+
+        hiddenId.value =
+            page.id;
+
+    }
+
+
+    /* 編集モード表示 */
+
+    const heading =
+        document.getElementById(
+            "editorTitle"
+        );
+
+    if(heading){
+
+        heading.textContent =
+            "✏️ 記事を編集";
+
+    }
+
+}
+
+/* =========================================
    WikiHub 保存用セッション処理
 ========================================= */
 
