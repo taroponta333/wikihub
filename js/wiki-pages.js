@@ -13,7 +13,6 @@
 ========================================*/
 
 let currentWikiId = null;
-let currentWiki = null;
 
 let pages = [];
 let visiblePages = [];
