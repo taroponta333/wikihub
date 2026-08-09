@@ -2,35 +2,29 @@
 ========================================
  WikiHub
  wiki-pages.js
- 記事一覧ページ
+ 記事一覧システム 完全修正版
 ========================================
 */
 
 "use strict";
 
-
-/* ========================================
-   グローバル
-======================================== */
-
-let currentWiki = null;
+/*========================================
+ 変数
+========================================*/
 
 let currentWikiId = null;
+let currentWiki = null;
 
-let allPages = [];
-
-let displayedPages = [];
-
-let currentSearch = "";
-
-let currentCategory = "";
+let pages = [];
+let visiblePages = [];
 
 let currentSort = "updated";
+let currentCategory = null;
 
 
-/* ========================================
-   初期化
-======================================== */
+/*========================================
+ 起動
+========================================*/
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -38,310 +32,689 @@ document.addEventListener(
 );
 
 
+/*========================================
+ 初期化
+========================================*/
+
 function initWikiPages(){
-
-    console.log(
-        "WikiHub wiki-pages.js initialized"
-    );
-
-
-    currentWikiId =
-        getCurrentWikiId();
-
-
-    loadWiki();
-
-
-    setupButtons();
-
-
-    setupSearch();
-
-
-    setupSortButtons();
-
-
-    renderAll();
-
-}
-
-
-/* ========================================
-   現在のWiki ID
-======================================== */
-
-function getCurrentWikiId(){
-
-    const params =
-        new URLSearchParams(
-            location.search
-        );
-
-
-    const urlWiki =
-        params.get("wiki");
-
-
-    if(urlWiki){
-
-        localStorage.setItem(
-            "wikihub_currentWiki",
-            String(urlWiki)
-        );
-
-        return String(urlWiki);
-
-    }
-
-
-    const stored =
-        localStorage.getItem(
-            "wikihub_currentWiki"
-        );
-
-
-    if(stored){
-
-        return String(stored);
-
-    }
-
-
-    return null;
-
-}
-
-
-/* ========================================
-   Wikiデータ読み込み
-======================================== */
-
-function loadWiki(){
-
-    let wikis = [];
-
 
     try{
 
-        wikis =
-            JSON.parse(
-                localStorage.getItem(
-                    "wikihub_wikis"
-                )
-            ) || [];
+        /*------------------------------
+          Wiki ID取得
+        ------------------------------*/
+
+        const params =
+            new URLSearchParams(
+                location.search
+            );
+
+        /*
+         URL:
+         wiki-pages.html?wiki=wiki_xxxxx
+        */
+
+        const urlWikiId =
+            params.get("wiki");
+
+
+        /*
+         URLに無ければ
+         localStorageから取得
+        */
+
+        const savedWikiId =
+            localStorage.getItem(
+                "wikihub_currentWiki"
+            );
+
+
+        currentWikiId =
+            urlWikiId ||
+            savedWikiId ||
+            null;
+
+
+        /*------------------------------
+          Wiki取得
+        ------------------------------*/
+
+        currentWiki =
+            findCurrentWiki(
+                currentWikiId
+            );
+
+
+        if(!currentWiki){
+
+            showLoadError(
+                "Wikiが見つかりません。"
+            );
+
+            return;
+
+        }
+
+
+        /*------------------------------
+          現在Wikiを保存
+        ------------------------------*/
+
+        localStorage.setItem(
+            "wikihub_currentWiki",
+            String(currentWiki.id)
+        );
+
+
+        /*------------------------------
+          Wiki情報
+        ------------------------------*/
+
+        renderWikiInfo();
+
+
+        /*------------------------------
+          記事読み込み
+        ------------------------------*/
+
+        loadPages();
+
+
+        /*------------------------------
+          ボタン
+        ------------------------------*/
+
+        setupButtons();
+
+
+        /*------------------------------
+          検索
+        ------------------------------*/
+
+        setupSearch();
+
 
     }catch(error){
 
         console.error(
-            "Wikiデータ読み込みエラー:",
+            "wiki-pages.js 初期化エラー:",
             error
         );
 
-        wikis = [];
-
-    }
-
-
-    if(!Array.isArray(wikis)){
-
-        wikis = [];
-
-    }
-
-
-    /* Wikiがない */
-
-    if(wikis.length === 0){
-
-        currentWiki = null;
-
-        allPages = [];
-
-        return;
-
-    }
-
-
-    /* 現在のWikiを検索 */
-
-    if(currentWikiId){
-
-        currentWiki =
-            wikis.find(
-                wiki =>
-                    String(wiki.id) ===
-                    String(currentWikiId)
-            ) || null;
-
-    }
-
-
-    /* 見つからなければ先頭 */
-
-    if(!currentWiki){
-
-        currentWiki =
-            wikis[0];
-
-        currentWikiId =
-            String(currentWiki.id);
-
-
-        localStorage.setItem(
-            "wikihub_currentWiki",
-            currentWikiId
+        showLoadError(
+            "記事一覧の読み込み中にエラーが発生しました。"
         );
 
     }
 
+}
 
-    /* pages */
+
+/*========================================
+ Wiki取得
+========================================*/
+
+function findCurrentWiki(id){
+
+    if(!id){
+
+        return null;
+
+    }
+
+
+    const wikis =
+        readJSON(
+            "wikihub_wikis",
+            []
+        );
+
+
+    return wikis.find(
+        wiki =>
+            String(wiki.id) ===
+            String(id)
+    ) || null;
+
+}
+
+
+/*========================================
+ Wiki情報表示
+========================================*/
+
+function renderWikiInfo(){
+
+    const title =
+        document.getElementById(
+            "wikiTitle"
+        );
+
+
+    const description =
+        document.getElementById(
+            "wikiDescription"
+        );
+
+
+    if(title){
+
+        title.textContent =
+            currentWiki.name ||
+            currentWiki.title ||
+            "名称未設定Wiki";
+
+    }
+
+
+    if(description){
+
+        description.textContent =
+            currentWiki.description ||
+            "このWikiには説明がありません。";
+
+    }
+
+}
+
+
+/*========================================
+ 記事読み込み
+========================================*/
+
+function loadPages(){
+
+    /*
+     現在のWikiの記事を取得。
+
+     現行方式:
+     wikihub_pages
+
+     旧方式:
+     wiki.pages
+    */
+
+
+    const allPages =
+        readJSON(
+            "wikihub_pages",
+            []
+        );
+
+
+    /*------------------------------
+      新方式
+    ------------------------------*/
+
+    let wikiPages =
+        allPages.filter(
+
+            page =>
+                String(page.wikiId) ===
+                String(currentWiki.id)
+
+        );
+
+
+    /*------------------------------
+      旧方式
+    ------------------------------*/
 
     if(
-        currentWiki &&
-        Array.isArray(
-            currentWiki.pages
-        )
+        wikiPages.length === 0 &&
+        Array.isArray(currentWiki.pages)
     ){
 
-        allPages =
+        wikiPages =
             currentWiki.pages.slice();
 
-    }else{
-
-        allPages = [];
-
     }
 
 
-    console.log(
-        "Current Wiki:",
-        currentWiki
-    );
+    /*------------------------------
+      記事配列を正規化
+    ------------------------------*/
+
+    pages =
+        wikiPages.map(
+            normalizePage
+        );
 
 
-    console.log(
-        "Pages:",
-        allPages
+    visiblePages =
+        pages.slice();
+
+
+    /*------------------------------
+      各表示
+    ------------------------------*/
+
+    renderPageList(
+        visiblePages
     );
+
+    renderCategories();
+
+    renderStatistics();
+
+    renderRecentPages();
+
+    renderPopularPages();
 
 }
 
 
-/* ========================================
-   ボタン
-======================================== */
+/*========================================
+ 記事データ正規化
+========================================*/
 
-function setupButtons(){
+function normalizePage(page){
 
-    const homeButton =
-        document.getElementById(
-            "wikiHomeButton"
-        );
+    return {
 
+        ...page,
 
-    if(homeButton){
+        id:
+            page.id ??
+            "",
 
-        homeButton.addEventListener(
-            "click",
-            goHome
-        );
+        title:
+            page.title ||
+            "無題の記事",
 
-    }
+        content:
+            page.content ||
+            "",
 
+        category:
+            page.category ||
+            "",
 
-    const createButton =
-        document.getElementById(
-            "createPageButton"
-        );
+        author:
+            page.author ||
+            "不明",
 
+        views:
+            Number(page.views) ||
+            0,
 
-    if(createButton){
+        stars:
+            Number(page.stars) ||
+            0,
 
-        createButton.addEventListener(
-            "click",
-            createPageButton
-        );
+        createdAt:
+            page.createdAt ||
+            page.created ||
+            "",
 
-    }
+        updatedAt:
+            page.updatedAt ||
+            page.updated ||
+            page.createdAt ||
+            page.created ||
+            "",
 
+        tags:
+            Array.isArray(page.tags)
+                ? page.tags
+                : []
 
-    const headerCreate =
-        document.getElementById(
-            "createPageHeaderButton"
-        );
-
-
-    if(headerCreate){
-
-        headerCreate.addEventListener(
-            "click",
-            createPageButton
-        );
-
-    }
-
-
-    const bottomCreate =
-        document.getElementById(
-            "newPageButton"
-        );
-
-
-    if(bottomCreate){
-
-        bottomCreate.addEventListener(
-            "click",
-            createPageButton
-        );
-
-    }
+    };
 
 }
 
 
-/* ========================================
-   記事作成
-======================================== */
+/*========================================
+ 記事一覧表示
+========================================*/
 
-function createPageButton(){
+function renderPageList(list){
 
-    if(!currentWiki){
-
-        alert(
-            "Wikiが選択されていません。"
+    const box =
+        document.getElementById(
+            "pageList"
         );
+
+
+    if(!box){
 
         return;
 
     }
 
 
-    localStorage.setItem(
-        "wikihub_currentWiki",
-        String(currentWiki.id)
-    );
+    /*
+     件数表示
+    */
 
-
-    localStorage.removeItem(
-        "wikihub_currentPage"
-    );
-
-
-    location.href =
-        "editor.html?new=1&wiki=" +
-        encodeURIComponent(
-            currentWiki.id
+    const count =
+        document.getElementById(
+            "pageListCount"
         );
+
+
+    if(count){
+
+        count.textContent =
+            `${list.length}件`;
+
+    }
+
+
+    /*
+     空の場合
+    */
+
+    if(list.length === 0){
+
+        box.innerHTML = `
+
+            <div class="empty">
+
+                <div
+                    style="
+                        font-size:42px;
+                        margin-bottom:10px;
+                    "
+                >
+                    📄
+                </div>
+
+                <strong>
+                    記事がありません
+                </strong>
+
+                <p
+                    style="
+                        margin-top:8px;
+                        color:#777;
+                    "
+                >
+                    最初の記事を作成しましょう！
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="emptyCreatePageButton"
+                    style="margin-top:15px;"
+                >
+                    ＋ 新しい記事
+                </button>
+
+            </div>
+
+        `;
+
+
+        const button =
+            document.getElementById(
+                "emptyCreatePageButton"
+            );
+
+
+        if(button){
+
+            button.addEventListener(
+                "click",
+                createPage
+            );
+
+        }
+
+
+        return;
+
+    }
+
+
+    /*
+     一覧クリア
+    */
+
+    box.innerHTML = "";
+
+
+    /*
+     カード作成
+    */
+
+    list.forEach(
+        page => {
+
+            const card =
+                document.createElement(
+                    "article"
+                );
+
+
+            card.className =
+                "article-card hover-up";
+
+
+            /*
+             タイトル
+            */
+
+            const title =
+                document.createElement(
+                    "div"
+                );
+
+
+            title.className =
+                "article-title";
+
+
+            title.style.cursor =
+                "pointer";
+
+
+            title.innerHTML = `
+
+                <span
+                    style="
+                        font-size:24px;
+                        margin-right:8px;
+                    "
+                >
+                    📄
+                </span>
+
+                ${escapeHtml(
+                    page.title
+                )}
+
+            `;
+
+
+            title.addEventListener(
+                "click",
+                function(){
+
+                    openPage(
+                        page.id
+                    );
+
+                }
+            );
+
+
+            /*
+             情報
+            */
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+
+            info.className =
+                "article-info";
+
+
+            info.innerHTML = `
+
+                <span>
+                    👤
+                    ${escapeHtml(
+                        page.author
+                    )}
+                </span>
+
+                <span>
+                    📂
+                    ${escapeHtml(
+                        page.category ||
+                        "なし"
+                    )}
+                </span>
+
+                <span>
+                    👁
+                    ${page.views}
+                </span>
+
+                <span>
+                    ⭐
+                    ${page.stars}
+                </span>
+
+            `;
+
+
+            /*
+             更新日時
+            */
+
+            const updated =
+                document.createElement(
+                    "div"
+                );
+
+
+            updated.className =
+                "article-updated";
+
+
+            if(page.updatedAt){
+
+                updated.textContent =
+                    "更新: " +
+                    formatDate(
+                        page.updatedAt
+                    );
+
+            }
+
+
+            /*
+             ボタン
+            */
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "article-actions";
+
+
+            const openButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            openButton.type =
+                "button";
+
+
+            openButton.className =
+                "btn btn-primary";
+
+
+            openButton.textContent =
+                "📖 開く";
+
+
+            openButton.addEventListener(
+                "click",
+                function(){
+
+                    openPage(
+                        page.id
+                    );
+
+                }
+            );
+
+
+            actions.appendChild(
+                openButton
+            );
+
+
+            /*
+             カードへ追加
+            */
+
+            card.appendChild(
+                title
+            );
+
+            card.appendChild(
+                info
+            );
+
+            card.appendChild(
+                updated
+            );
+
+            card.appendChild(
+                actions
+            );
+
+
+            box.appendChild(
+                card
+            );
+
+        }
+    );
 
 }
 
 
-/* ========================================
-   Wikiトップ
-======================================== */
+/*========================================
+ 記事を開く
+========================================*/
 
-function goHome(){
+function openPage(id){
+
+    if(!id){
+
+        return;
+
+    }
+
+
+    /*
+     現在の記事を保存
+    */
+
+    localStorage.setItem(
+        "wikihub_currentPage",
+        String(id)
+    );
+
+
+    /*
+     現在Wikiも保存
+    */
 
     if(currentWiki){
 
@@ -353,15 +726,22 @@ function goHome(){
     }
 
 
+    /*
+     wiki.htmlへ
+    */
+
     location.href =
-        "wiki.html";
+        "wiki.html?id=" +
+        encodeURIComponent(
+            id
+        );
 
 }
 
 
-/* ========================================
-   検索
-======================================== */
+/*========================================
+ 検索設定
+========================================*/
 
 function setupSearch(){
 
@@ -383,12 +763,9 @@ function setupSearch(){
             "input",
             function(){
 
-                currentSearch =
-                    this.value.trim()
-                    .toLowerCase();
-
-
-                renderAll();
+                searchPages(
+                    input.value
+                );
 
             }
         );
@@ -396,17 +773,15 @@ function setupSearch(){
 
         input.addEventListener(
             "keydown",
-            function(event){
+            function(e){
 
-                if(event.key === "Enter"){
+                if(e.key === "Enter"){
 
-                    event.preventDefault();
+                    e.preventDefault();
 
-                    currentSearch =
-                        this.value.trim()
-                        .toLowerCase();
-
-                    renderAll();
+                    searchPages(
+                        input.value
+                    );
 
                 }
 
@@ -422,16 +797,11 @@ function setupSearch(){
             "click",
             function(){
 
-                if(input){
-
-                    currentSearch =
-                        input.value
-                        .trim()
-                        .toLowerCase();
-
-                }
-
-                renderAll();
+                searchPages(
+                    input
+                        ? input.value
+                        : ""
+                );
 
             }
         );
@@ -441,34 +811,784 @@ function setupSearch(){
 }
 
 
-/* ========================================
-   並び順
-======================================== */
+/*========================================
+ 検索
+========================================*/
 
-function setupSortButtons(){
+function searchPages(keyword){
 
-    const updatedButton =
+    const word =
+        String(
+            keyword || ""
+        )
+        .trim()
+        .toLowerCase();
+
+
+    /*
+     検索解除
+    */
+
+    if(word === ""){
+
+        currentCategory =
+            null;
+
+        visiblePages =
+            pages.slice();
+
+        updateSearchStatus();
+
+        renderPageList(
+            visiblePages
+        );
+
+        return;
+
+    }
+
+
+    /*
+     検索
+    */
+
+    visiblePages =
+        pages.filter(
+            page => {
+
+                const title =
+                    String(
+                        page.title
+                    )
+                    .toLowerCase();
+
+
+                const content =
+                    String(
+                        page.content
+                    )
+                    .toLowerCase();
+
+
+                const category =
+                    String(
+                        page.category
+                    )
+                    .toLowerCase();
+
+
+                const tags =
+                    Array.isArray(
+                        page.tags
+                    )
+                    ? page.tags
+                        .join(" ")
+                        .toLowerCase()
+                    : "";
+
+
+                return (
+
+                    title.includes(word) ||
+
+                    content.includes(word) ||
+
+                    category.includes(word) ||
+
+                    tags.includes(word)
+
+                );
+
+            }
+        );
+
+
+    currentCategory =
+        null;
+
+
+    updateSearchStatus(
+        `"${keyword}" の検索結果`
+    );
+
+
+    renderPageList(
+        visiblePages
+    );
+
+}
+
+
+/*========================================
+ 検索状態
+========================================*/
+
+function updateSearchStatus(text){
+
+    const status =
+        document.getElementById(
+            "searchStatus"
+        );
+
+
+    if(!status){
+
+        return;
+
+    }
+
+
+    if(!text){
+
+        status.style.display =
+            "none";
+
+        status.textContent =
+            "";
+
+        return;
+
+    }
+
+
+    status.style.display =
+        "block";
+
+
+    status.textContent =
+        text;
+
+}
+
+
+/*========================================
+ カテゴリ
+========================================*/
+
+function renderCategories(){
+
+    const box =
+        document.getElementById(
+            "categoryList"
+        );
+
+
+    if(!box){
+
+        return;
+
+    }
+
+
+    const map =
+        new Map();
+
+
+    pages.forEach(
+        page => {
+
+            const category =
+                page.category ||
+                "なし";
+
+
+            map.set(
+                category,
+                (map.get(category) || 0) + 1
+            );
+
+        }
+    );
+
+
+    if(map.size === 0){
+
+        box.innerHTML =
+            `<div style="color:#777;">
+                カテゴリはありません
+            </div>`;
+
+        return;
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    /*
+     すべて
+    */
+
+    const all =
+        document.createElement(
+            "button"
+        );
+
+
+    all.type =
+        "button";
+
+
+    all.className =
+        "category-button";
+
+
+    all.textContent =
+        `📚 すべて (${pages.length})`;
+
+
+    all.addEventListener(
+        "click",
+        function(){
+
+            currentCategory =
+                null;
+
+            visiblePages =
+                pages.slice();
+
+            updateSearchStatus();
+
+            renderPageList(
+                visiblePages
+            );
+
+        }
+    );
+
+
+    box.appendChild(
+        all
+    );
+
+
+    /*
+     各カテゴリ
+    */
+
+    [...map.entries()]
+        .sort(
+            (a,b) =>
+                a[0].localeCompare(
+                    b[0],
+                    "ja"
+                )
+        )
+        .forEach(
+            ([category,count]) => {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.type =
+                    "button";
+
+
+                button.className =
+                    "category-button";
+
+
+                button.textContent =
+                    `📂 ${category} (${count})`;
+
+
+                button.addEventListener(
+                    "click",
+                    function(){
+
+                        filterCategory(
+                            category
+                        );
+
+                    }
+                );
+
+
+                box.appendChild(
+                    button
+                );
+
+            }
+        );
+
+}
+
+
+/*========================================
+ カテゴリ絞り込み
+========================================*/
+
+function filterCategory(category){
+
+    currentCategory =
+        category;
+
+
+    visiblePages =
+        pages.filter(
+            page =>
+                (
+                    page.category ||
+                    "なし"
+                ) === category
+        );
+
+
+    updateSearchStatus(
+        `カテゴリ: ${category}`
+    );
+
+
+    renderPageList(
+        visiblePages
+    );
+
+}
+
+
+/*========================================
+ 統計
+========================================*/
+
+function renderStatistics(){
+
+    const pageCount =
+        document.getElementById(
+            "pageCount"
+        );
+
+
+    const totalViews =
+        document.getElementById(
+            "totalViews"
+        );
+
+
+    const totalEdits =
+        document.getElementById(
+            "totalEdits"
+        );
+
+
+    /*
+     記事数
+    */
+
+    if(pageCount){
+
+        pageCount.textContent =
+            pages.length;
+
+    }
+
+
+    /*
+     閲覧数
+    */
+
+    let views = 0;
+
+
+    pages.forEach(
+        page => {
+
+            views +=
+                Number(
+                    page.views
+                ) || 0;
+
+        }
+    );
+
+
+    if(totalViews){
+
+        totalViews.textContent =
+            views;
+
+    }
+
+
+    /*
+     編集数
+
+     Wiki statistics を優先。
+     無ければ履歴から計算。
+    */
+
+    let edits =
+        Number(
+            currentWiki?.statistics?.edits
+        ) || 0;
+
+
+    if(edits === 0){
+
+        pages.forEach(
+            page => {
+
+                if(
+                    Array.isArray(
+                        page.history
+                    )
+                ){
+
+                    edits +=
+                        page.history.length;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if(totalEdits){
+
+        totalEdits.textContent =
+            edits;
+
+    }
+
+}
+
+
+/*========================================
+ 最近更新
+========================================*/
+
+function renderRecentPages(){
+
+    const box =
+        document.getElementById(
+            "recentPages"
+        );
+
+
+    if(!box){
+
+        return;
+
+    }
+
+
+    const recent =
+        pages
+            .slice()
+            .sort(
+                (a,b) =>
+                    getTime(
+                        b.updatedAt
+                    ) -
+                    getTime(
+                        a.updatedAt
+                    )
+            )
+            .slice(
+                0,
+                5
+            );
+
+
+    if(recent.length === 0){
+
+        box.textContent =
+            "なし";
+
+        return;
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    recent.forEach(
+        page => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.style.marginBottom =
+                "8px";
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.href =
+                "wiki.html?id=" +
+                encodeURIComponent(
+                    page.id
+                );
+
+
+            link.textContent =
+                "📄 " +
+                page.title;
+
+
+            item.appendChild(
+                link
+            );
+
+
+            box.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/*========================================
+ 人気記事
+========================================*/
+
+function renderPopularPages(){
+
+    const box =
+        document.getElementById(
+            "popularPages"
+        );
+
+
+    if(!box){
+
+        return;
+
+    }
+
+
+    const popular =
+        pages
+            .slice()
+            .sort(
+                (a,b) =>
+                    (
+                        Number(b.views) || 0
+                    ) -
+                    (
+                        Number(a.views) || 0
+                    )
+            )
+            .slice(
+                0,
+                5
+            );
+
+
+    if(popular.length === 0){
+
+        box.textContent =
+            "なし";
+
+        return;
+
+    }
+
+
+    box.innerHTML = "";
+
+
+    popular.forEach(
+        page => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.style.marginBottom =
+                "8px";
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.href =
+                "wiki.html?id=" +
+                encodeURIComponent(
+                    page.id
+                );
+
+
+            link.textContent =
+                "⭐ " +
+                page.title;
+
+
+            item.appendChild(
+                link
+            );
+
+
+            box.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/*========================================
+ ソート
+========================================*/
+
+function sortByUpdated(){
+
+    currentSort =
+        "updated";
+
+
+    visiblePages =
+        visiblePages
+            .slice()
+            .sort(
+                (a,b) =>
+                    getTime(
+                        b.updatedAt
+                    ) -
+                    getTime(
+                        a.updatedAt
+                    )
+            );
+
+
+    renderPageList(
+        visiblePages
+    );
+
+}
+
+
+/*========================================
+ 名前順
+========================================*/
+
+function sortByTitle(){
+
+    currentSort =
+        "title";
+
+
+    visiblePages =
+        visiblePages
+            .slice()
+            .sort(
+                (a,b) =>
+                    String(
+                        a.title
+                    ).localeCompare(
+                        String(
+                            b.title
+                        ),
+                        "ja"
+                    )
+            );
+
+
+    renderPageList(
+        visiblePages
+    );
+
+}
+
+
+/*========================================
+ ボタン設定
+========================================*/
+
+function setupButtons(){
+
+    /*
+     更新順
+    */
+
+    const sortUpdated =
         document.getElementById(
             "sortUpdatedButton"
         );
 
 
-    const titleButton =
+    if(sortUpdated){
+
+        sortUpdated.addEventListener(
+            "click",
+            sortByUpdated
+        );
+
+    }
+
+
+    /*
+     名前順
+    */
+
+    const sortTitle =
         document.getElementById(
             "sortTitleButton"
         );
 
 
-    if(updatedButton){
+    if(sortTitle){
 
-        updatedButton.addEventListener(
+        sortTitle.addEventListener(
+            "click",
+            sortByTitle
+        );
+
+    }
+
+
+    /*
+     Wikiトップ
+    */
+
+    const wikiHome =
+        document.getElementById(
+            "wikiHomeButton"
+        );
+
+
+    if(wikiHome){
+
+        wikiHome.addEventListener(
             "click",
             function(){
 
-                currentSort =
-                    "updated";
+                if(currentWiki){
 
-                renderPageList();
+                    localStorage.setItem(
+                        "wikihub_currentWiki",
+                        String(
+                            currentWiki.id
+                        )
+                    );
+
+                }
+
+                location.href =
+                    "wiki.html";
 
             }
         );
@@ -476,18 +1596,41 @@ function setupSortButtons(){
     }
 
 
-    if(titleButton){
+    /*
+     新しい記事
+    */
 
-        titleButton.addEventListener(
+    const create =
+        document.getElementById(
+            "createPageButton"
+        );
+
+
+    if(create){
+
+        create.addEventListener(
             "click",
-            function(){
+            createPage
+        );
 
-                currentSort =
-                    "title";
+    }
 
-                renderPageList();
 
-            }
+    /*
+     ヘッダーの記事作成
+    */
+
+    const headerCreate =
+        document.getElementById(
+            "createPageHeaderButton"
+        );
+
+
+    if(headerCreate){
+
+        headerCreate.addEventListener(
+            "click",
+            createPage
         );
 
     }
@@ -495,32 +1638,194 @@ function setupSortButtons(){
 }
 
 
-/* ========================================
-   全体描画
-======================================== */
+/*========================================
+ 新しい記事
+========================================*/
 
-function renderAll(){
+function createPage(){
 
-    renderWikiInfo();
+    if(!currentWiki){
 
-    renderCategories();
+        alert(
+            "Wikiが読み込まれていません。"
+        );
 
-    renderPageList();
+        return;
 
-    renderStatistics();
+    }
 
-    renderRecentPages();
 
-    renderPopularPages();
+    /*
+     Wikiを保存
+    */
+
+    localStorage.setItem(
+        "wikihub_currentWiki",
+        String(
+            currentWiki.id
+        )
+    );
+
+
+    /*
+     既存の作成画面へ
+    */
+
+    location.href =
+        "create-page.html?wiki=" +
+        encodeURIComponent(
+            currentWiki.id
+        );
 
 }
 
 
-/* ========================================
-   Wiki情報
-======================================== */
+/*========================================
+ 日付
+========================================*/
 
-function renderWikiInfo(){
+function formatDate(value){
+
+    if(!value){
+
+        return "不明";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleString(
+        "ja-JP"
+    );
+
+}
+
+
+/*========================================
+ 時刻
+========================================*/
+
+function getTime(value){
+
+    if(!value){
+
+        return 0;
+
+    }
+
+
+    const time =
+        new Date(value)
+            .getTime();
+
+
+    return Number.isNaN(time)
+        ? 0
+        : time;
+
+}
+
+
+/*========================================
+ JSON安全読み込み
+========================================*/
+
+function readJSON(
+    key,
+    fallback
+){
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                key
+            );
+
+
+        if(!raw){
+
+            return fallback;
+
+        }
+
+
+        const data =
+            JSON.parse(
+                raw
+            );
+
+
+        return data ?? fallback;
+
+
+    }catch(error){
+
+        console.error(
+            `localStorage "${key}" の読み込みに失敗:`,
+            error
+        );
+
+
+        return fallback;
+
+    }
+
+}
+
+
+/*========================================
+ HTMLエスケープ
+========================================*/
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+/*========================================
+ 読み込みエラー
+========================================*/
+
+function showLoadError(message){
 
     const title =
         document.getElementById(
@@ -534,34 +1839,16 @@ function renderWikiInfo(){
         );
 
 
-    if(!currentWiki){
-
-        if(title){
-
-            title.textContent =
-                "Wikiがありません";
-
-        }
-
-
-        if(description){
-
-            description.textContent =
-                "Wikiデータを作成してください。";
-
-        }
-
-        return;
-
-    }
+    const pageList =
+        document.getElementById(
+            "pageList"
+        );
 
 
     if(title){
 
         title.textContent =
-            currentWiki.name ||
-            currentWiki.title ||
-            "Wiki";
+            "⚠️ 読み込みエラー";
 
     }
 
@@ -569,1295 +1856,77 @@ function renderWikiInfo(){
     if(description){
 
         description.textContent =
-            currentWiki.description ||
-            "このWikiにはまだ説明がありません。";
-
-    }
-
-}
-
-
-/* ========================================
-   カテゴリ
-======================================== */
-
-function renderCategories(){
-
-    const container =
-        document.getElementById(
-            "categoryList"
-        );
-
-
-    if(!container){
-
-        return;
+            message;
 
     }
 
 
-    const categories = {};
+    if(pageList){
 
-
-    allPages.forEach(
-        page => {
-
-            const category =
-                page.category ||
-                "未分類";
-
-
-            if(!categories[category]){
-
-                categories[category] = 0;
-
-            }
-
-
-            categories[category]++;
-
-        }
-    );
-
-
-    const names =
-        Object.keys(
-            categories
-        ).sort();
-
-
-    if(names.length === 0){
-
-        container.innerHTML =
-            "<p>カテゴリはありません。</p>";
-
-        return;
-
-    }
-
-
-    container.innerHTML = "";
-
-
-    /* 全記事 */
-
-    const allButton =
-        document.createElement(
-            "button"
-        );
-
-
-    allButton.type =
-        "button";
-
-
-    allButton.className =
-        "btn btn-secondary w100";
-
-
-    allButton.textContent =
-        "📚 すべての記事 (" +
-        allPages.length +
-        ")";
-
-
-    allButton.addEventListener(
-        "click",
-        function(){
-
-            currentCategory = "";
-
-            renderAll();
-
-        }
-    );
-
-
-    container.appendChild(
-        allButton
-    );
-
-
-    /* カテゴリ */
-
-    names.forEach(
-        category => {
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type =
-                "button";
-
-
-            button.className =
-                "btn btn-secondary w100 mt10";
-
-
-            button.textContent =
-                "📁 " +
-                category +
-                " (" +
-                categories[category] +
-                ")";
-
-
-            button.addEventListener(
-                "click",
-                function(){
-
-                    currentCategory =
-                        category;
-
-                    renderAll();
-
-                }
-            );
-
-
-            container.appendChild(
-                button
-            );
-
-        }
-    );
-
-}
-
-
-/* ========================================
-   記事フィルター
-======================================== */
-
-function getFilteredPages(){
-
-    let pages =
-        allPages.slice();
-
-
-    /* カテゴリ */
-
-    if(currentCategory){
-
-        pages =
-            pages.filter(
-                page =>
-                    (
-                        page.category ||
-                        "未分類"
-                    ) ===
-                    currentCategory
-            );
-
-    }
-
-
-    /* 検索 */
-
-    if(currentSearch){
-
-        pages =
-            pages.filter(
-                page => {
-
-                    const title =
-                        String(
-                            page.title || ""
-                        ).toLowerCase();
-
-
-                    const content =
-                        String(
-                            page.content || ""
-                        ).toLowerCase();
-
-
-                    const category =
-                        String(
-                            page.category || ""
-                        ).toLowerCase();
-
-
-                    const tags =
-                        Array.isArray(
-                            page.tags
-                        )
-                            ? page.tags.join(" ")
-                            : String(
-                                page.tags || ""
-                            );
-
-
-                    return (
-
-                        title.includes(
-                            currentSearch
-                        )
-
-                        ||
-
-                        content.includes(
-                            currentSearch
-                        )
-
-                        ||
-
-                        category.includes(
-                            currentSearch
-                        )
-
-                        ||
-
-                        tags
-                            .toLowerCase()
-                            .includes(
-                                currentSearch
-                            )
-
-                    );
-
-                }
-            );
-
-    }
-
-
-    /* ソート */
-
-    if(currentSort === "title"){
-
-        pages.sort(
-            (a,b) =>
-                String(
-                    a.title || ""
-                ).localeCompare(
-                    String(
-                        b.title || ""
-                    ),
-                    "ja"
-                )
-        );
-
-    }else{
-
-        pages.sort(
-            (a,b) =>
-                getTime(
-                    b.updated
-                ) -
-                getTime(
-                    a.updated
-                )
-        );
-
-    }
-
-
-    return pages;
-
-}
-
-
-/* ========================================
-   記事一覧
-======================================== */
-
-function renderPageList(){
-
-    const container =
-        document.getElementById(
-            "pageList"
-        );
-
-
-    if(!container){
-
-        return;
-
-    }
-
-
-    displayedPages =
-        getFilteredPages();
-
-
-    const count =
-        document.getElementById(
-            "pageListCount"
-        );
-
-
-    if(count){
-
-        count.textContent =
-            displayedPages.length +
-            "件";
-
-    }
-
-
-    const title =
-        document.getElementById(
-            "pageListTitle"
-        );
-
-
-    if(title){
-
-        if(currentSearch){
-
-            title.textContent =
-                "🔍 検索結果";
-
-        }else if(currentCategory){
-
-            title.textContent =
-                "📁 " +
-                currentCategory;
-
-        }else{
-
-            title.textContent =
-                "すべての記事";
-
-        }
-
-    }
-
-
-    const status =
-        document.getElementById(
-            "searchStatus"
-        );
-
-
-    if(status){
-
-        if(
-            currentSearch ||
-            currentCategory
-        ){
-
-            status.style.display =
-                "block";
-
-
-            const parts = [];
-
-
-            if(currentSearch){
-
-                parts.push(
-                    "検索: 「" +
-                    escapeHTML(
-                        currentSearch
-                    ) +
-                    "」"
-                );
-
-            }
-
-
-            if(currentCategory){
-
-                parts.push(
-                    "カテゴリ: " +
-                    escapeHTML(
-                        currentCategory
-                    )
-                );
-
-            }
-
-
-            status.innerHTML =
-                parts.join(
-                    "　"
-                );
-
-        }else{
-
-            status.style.display =
-                "none";
-
-        }
-
-    }
-
-
-    if(displayedPages.length === 0){
-
-        container.innerHTML = `
+        pageList.innerHTML = `
 
             <div
+                class="empty"
                 style="
+                    padding:30px;
                     text-align:center;
-                    padding:50px 20px;
-                    color:#777;
                 "
             >
 
                 <div
                     style="
-                        font-size:45px;
+                        font-size:40px;
                         margin-bottom:10px;
                     "
                 >
-                    📭
+                    ⚠️
                 </div>
 
-                <h2>
-                    記事がありません
-                </h2>
+                <strong>
+                    ${escapeHtml(message)}
+                </strong>
 
-                <p>
-                    条件に一致する記事が見つかりませんでした。
-                </p>
+                <br><br>
 
                 <button
                     type="button"
-                    class="btn btn-primary"
-                    id="emptyCreateButton"
+                    class="btn btn-secondary"
+                    onclick="location.href='explorer.html'"
                 >
-                    ＋ 新しい記事を作成
+                    Wiki一覧へ戻る
                 </button>
 
             </div>
 
         `;
 
-
-        const emptyButton =
-            document.getElementById(
-                "emptyCreateButton"
-            );
-
-
-        if(emptyButton){
-
-            emptyButton.addEventListener(
-                "click",
-                createPageButton
-            );
-
-        }
-
-
-        return;
-
-    }
-
-
-    container.innerHTML = "";
-
-
-    displayedPages.forEach(
-        page => {
-
-            container.appendChild(
-                createPageCard(
-                    page
-                )
-            );
-
-        }
-    );
-
-}
-
-
-/* ========================================
-   記事カード
-======================================== */
-
-function createPageCard(page){
-
-    const card =
-        document.createElement(
-            "article"
-        );
-
-
-    card.className =
-        "wiki-page-card";
-
-
-    card.style.cssText = `
-        padding:16px;
-        margin-bottom:12px;
-        border:1px solid #ddd;
-        border-radius:8px;
-        background:#fff;
-        cursor:pointer;
-        transition:transform .15s, box-shadow .15s;
-    `;
-
-
-    card.addEventListener(
-        "mouseenter",
-        function(){
-
-            this.style.transform =
-                "translateY(-2px)";
-
-            this.style.boxShadow =
-                "0 4px 12px rgba(0,0,0,.10)";
-
-        }
-    );
-
-
-    card.addEventListener(
-        "mouseleave",
-        function(){
-
-            this.style.transform =
-                "";
-
-            this.style.boxShadow =
-                "";
-
-        }
-    );
-
-
-    card.addEventListener(
-        "click",
-        function(){
-
-            openPage(
-                page
-            );
-
-        }
-    );
-
-
-    const title =
-        document.createElement(
-            "h3"
-        );
-
-
-    title.style.marginTop =
-        "0";
-
-
-    title.innerHTML =
-        "📄 " +
-        escapeHTML(
-            page.title ||
-            "無題の記事"
-        );
-
-
-    const meta =
-        document.createElement(
-            "div"
-        );
-
-
-    meta.style.cssText = `
-        color:#777;
-        font-size:13px;
-        margin:8px 0;
-    `;
-
-
-    meta.innerHTML =
-        getCategoryHTML(
-            page
-        ) +
-        "　" +
-        formatDate(
-            page.updated ||
-            page.created
-        );
-
-
-    const description =
-        document.createElement(
-            "p"
-        );
-
-
-    description.style.cssText = `
-        margin:8px 0;
-        color:#444;
-        line-height:1.6;
-    `;
-
-
-    description.textContent =
-        getExcerpt(
-            page.content
-        );
-
-
-    card.appendChild(
-        title
-    );
-
-
-    card.appendChild(
-        meta
-    );
-
-
-    card.appendChild(
-        description
-    );
-
-
-    /* タグ */
-
-    if(
-        Array.isArray(
-            page.tags
-        ) &&
-        page.tags.length > 0
-    ){
-
-        const tags =
-            document.createElement(
-                "div"
-            );
-
-
-        tags.style.marginTop =
-            "10px";
-
-
-        page.tags
-            .slice(0,8)
-            .forEach(
-                tag => {
-
-                    const span =
-                        document.createElement(
-                            "span"
-                        );
-
-
-                    span.textContent =
-                        "#" + tag;
-
-
-                    span.style.cssText = `
-                        display:inline-block;
-                        margin:2px 4px 2px 0;
-                        padding:3px 7px;
-                        border-radius:12px;
-                        background:#eef3ff;
-                        color:#3366cc;
-                        font-size:12px;
-                    `;
-
-
-                    tags.appendChild(
-                        span
-                    );
-
-                }
-            );
-
-
-        card.appendChild(
-            tags
-        );
-
-    }
-
-
-    return card;
-
-}
-
-
-/* ========================================
-   記事を開く
-======================================== */
-
-function openPage(page){
-
-    if(!page || !page.id){
-
-        return;
-
-    }
-
-
-    localStorage.setItem(
-        "wikihub_currentWiki",
-        String(
-            currentWiki.id
-        )
-    );
-
-
-    localStorage.setItem(
-        "wikihub_currentPage",
-        String(
-            page.id
-        )
-    );
-
-
-    /*
-       記事ページがある場合は
-       wiki.htmlへ
-    */
-
-    location.href =
-        "wiki.html?id=" +
-        encodeURIComponent(
-            page.id
-        );
-
-}
-
-
-/* ========================================
-   統計
-======================================== */
-
-function renderStatistics(){
-
-    const pageCount =
-        document.getElementById(
-            "pageCount"
-        );
-
-
-    if(pageCount){
-
-        pageCount.textContent =
-            allPages.length;
-
-    }
-
-
-    let totalViews = 0;
-
-    let totalEdits = 0;
-
-
-    allPages.forEach(
-        page => {
-
-            totalViews +=
-                Number(
-                    page.views ||
-                    0
-                );
-
-
-            if(
-                Array.isArray(
-                    page.history
-                )
-            ){
-
-                totalEdits +=
-                    page.history.length;
-
-            }
-
-        }
-    );
-
-
-    /* Wiki統計も確認 */
-
-    if(currentWiki){
-
-        if(
-            currentWiki.statistics
-        ){
-
-            if(
-                Number.isFinite(
-                    Number(
-                        currentWiki
-                            .statistics
-                            .views
-                    )
-                )
-            ){
-
-                totalViews =
-                    Number(
-                        currentWiki
-                            .statistics
-                            .views
-                    );
-
-            }
-
-
-            if(
-                Number.isFinite(
-                    Number(
-                        currentWiki
-                            .statistics
-                            .edits
-                    )
-                )
-            ){
-
-                totalEdits =
-                    Number(
-                        currentWiki
-                            .statistics
-                            .edits
-                    );
-
-            }
-
-        }
-
-    }
-
-
-    const views =
-        document.getElementById(
-            "totalViews"
-        );
-
-
-    if(views){
-
-        views.textContent =
-            totalViews;
-
-    }
-
-
-    const edits =
-        document.getElementById(
-            "totalEdits"
-        );
-
-
-    if(edits){
-
-        edits.textContent =
-            totalEdits;
-
     }
 
 }
 
 
-/* ========================================
-   最近更新
-======================================== */
+/*========================================
+ デバッグ用
+========================================*/
 
-function renderRecentPages(){
+window.WikiHubPages = {
 
-    const container =
-        document.getElementById(
-            "recentPages"
-        );
+    reload:
+        loadPages,
 
+    search:
+        searchPages,
 
-    if(!container){
+    sortUpdated:
+        sortByUpdated,
 
-        return;
+    sortTitle:
+        sortByTitle,
 
-    }
+    openPage:
+        openPage,
 
+    createPage:
+        createPage
 
-    const pages =
-        allPages
-            .slice()
-            .sort(
-                (a,b) =>
-                    getTime(
-                        b.updated
-                    ) -
-                    getTime(
-                        a.updated
-                    )
-            )
-            .slice(0,5);
-
-
-    renderMiniPageList(
-        container,
-        pages
-    );
-
-}
-
-
-/* ========================================
-   人気記事
-======================================== */
-
-function renderPopularPages(){
-
-    const container =
-        document.getElementById(
-            "popularPages"
-        );
-
-
-    if(!container){
-
-        return;
-
-    }
-
-
-    const pages =
-        allPages
-            .slice()
-            .sort(
-                (a,b) =>
-                    Number(
-                        b.views || 0
-                    ) -
-                    Number(
-                        a.views || 0
-                    )
-            )
-            .slice(0,5);
-
-
-    renderMiniPageList(
-        container,
-        pages
-    );
-
-}
-
-
-/* ========================================
-   ミニ記事一覧
-======================================== */
-
-function renderMiniPageList(
-    container,
-    pages
-){
-
-    if(!pages.length){
-
-        container.innerHTML =
-            "<p>なし</p>";
-
-        return;
-
-    }
-
-
-    container.innerHTML = "";
-
-
-    pages.forEach(
-        page => {
-
-            const item =
-                document.createElement(
-                    "div"
-                );
-
-
-            item.style.cssText = `
-                padding:8px 0;
-                border-bottom:1px solid #eee;
-                cursor:pointer;
-            `;
-
-
-            item.innerHTML = `
-
-                <strong>
-                    📄
-                    ${escapeHTML(
-                        page.title ||
-                        "無題"
-                    )}
-                </strong>
-
-                <br>
-
-                <small
-                    style="color:#777;"
-                >
-                    ${formatDate(
-                        page.updated ||
-                        page.created
-                    )}
-                </small>
-
-            `;
-
-
-            item.addEventListener(
-                "click",
-                function(){
-
-                    openPage(
-                        page
-                    );
-
-                }
-            );
-
-
-            container.appendChild(
-                item
-            );
-
-        }
-    );
-
-}
-
-
-/* ========================================
-   カテゴリHTML
-======================================== */
-
-function getCategoryHTML(page){
-
-    const category =
-        page.category ||
-        "未分類";
-
-
-    return `
-        <span>
-            📁
-            ${escapeHTML(
-                category
-            )}
-        </span>
-    `;
-
-}
-
-
-/* ========================================
-   本文抜粋
-======================================== */
-
-function getExcerpt(content){
-
-    if(!content){
-
-        return "本文はありません。";
-
-    }
-
-
-    let text =
-        String(
-            content
-        );
-
-
-    text =
-        text
-            .replace(
-                /```[\s\S]*?```/g,
-                ""
-            )
-            .replace(
-                /\[\[File:[^\]]+\]\]/g,
-                ""
-            )
-            .replace(
-                /\[\[([^\]|]+)(\|[^\]]+)?\]\]/g,
-                "$1"
-            )
-            .replace(
-                /[*#>`{|}=]/g,
-                ""
-            )
-            .replace(
-                /\s+/g,
-                " "
-            )
-            .trim();
-
-
-    if(text.length > 120){
-
-        text =
-            text.substring(
-                0,
-                120
-            ) +
-            "...";
-
-    }
-
-
-    return text ||
-        "本文はありません。";
-
-}
-
-
-/* ========================================
-   日付
-======================================== */
-
-function formatDate(value){
-
-    if(!value){
-
-        return "日時不明";
-
-    }
-
-
-    const date =
-        new Date(
-            value
-        );
-
-
-    if(
-        Number.isNaN(
-            date.getTime()
-        )
-    ){
-
-        return "日時不明";
-
-    }
-
-
-    return date.toLocaleString(
-        "ja-JP",
-        {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit"
-        }
-    );
-
-}
-
-
-/* ========================================
-   時刻
-======================================== */
-
-function getTime(value){
-
-    if(!value){
-
-        return 0;
-
-    }
-
-
-    const time =
-        new Date(
-            value
-        ).getTime();
-
-
-    return Number.isNaN(
-        time
-    )
-        ? 0
-        : time;
-
-}
-
-
-/* ========================================
-   HTMLエスケープ
-======================================== */
-
-function escapeHTML(value){
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* ========================================
-   外部から使えるようにする
-======================================== */
-
-window.createPageButton =
-    createPageButton;
-
-
-window.goHome =
-    goHome;
-
-
-window.searchPage =
-    function(){
-
-        const input =
-            document.getElementById(
-                "searchInput"
-            );
-
-
-        if(input){
-
-            currentSearch =
-                input.value
-                    .trim()
-                    .toLowerCase();
-
-        }
-
-
-        renderAll();
-
-    };
-
-
-/* ========================================
-   Wiki変更用
-======================================== */
-
-window.reloadWikiPages =
-    function(){
-
-        currentWikiId =
-            getCurrentWikiId();
-
-        loadWiki();
-
-        renderAll();
-
-    };
+};
