@@ -1225,38 +1225,46 @@ function getWikiPagesLocal(wikiId){
 
 
 /* =========================================
-   編集
+   現在の記事を編集
 ========================================= */
 
 function editCurrentPage(){
 
+    if(!currentPage){
+
+        alert("記事を読み込めませんでした。");
+        return;
+
+    }
+
+    /* 現在の記事IDを保存 */
+
     localStorage.setItem(
-
         "wikihub_currentPage",
-
-        currentPage.id
-
+        String(currentPage.id)
     );
 
+
+    /* 現在のWikiも保存 */
 
     if(currentWiki){
 
         localStorage.setItem(
-
             "wikihub_currentWiki",
-
-            currentWiki.id
-
+            String(currentWiki.id)
         );
 
     }
 
 
+    /* 編集モードでエディターを開く */
+
     location.href =
-        "editor.html";
+        "editor.html?id=" +
+        encodeURIComponent(currentPage.id) +
+        "&edit=1";
 
 }
-
 
 /* =========================================
    履歴
