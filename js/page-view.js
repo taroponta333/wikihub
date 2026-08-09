@@ -75,61 +75,102 @@ function initPageView(){
    記事読み込み
 ========================================= */
 
+/* =========================================
+   記事読み込み
+========================================= */
+
 function loadArticle(){
+
+    const wikis = JSON.parse(
+        localStorage.getItem("wikihub_wikis")
+    ) || [];
 
     let page = null;
     let wiki = null;
 
 
-    /*
-       ---------------------------------------
-       新しい pages 保存方式
-       ---------------------------------------
-    */
+    /* =====================================
+       ① URLから記事ID
+    ===================================== */
 
-    const pages = JSON.parse(
+    const params =
+        new URLSearchParams(location.search);
 
+    const urlPageId =
+        params.get("id");
+
+
+    /* =====================================
+       ② 保存されている記事ID
+    ===================================== */
+
+    const savedPageId =
         localStorage.getItem(
-            "wikihub_pages"
-        )
-
-    ) || [];
+            "wikihub_currentPage"
+        );
 
 
-    page = pages.find(
-
-        p =>
-            String(p.id) ===
-            String(currentPageId)
-
-    );
+    currentPageId =
+        urlPageId || savedPageId;
 
 
-    if(page){
+    if(!currentPageId){
 
-        wiki = getWikiFromPage(
-            page
+        showPageError(
+            "記事IDが指定されていません。"
+        );
+
+        return;
+
+    }
+
+
+    /* =====================================
+       ③ Wikiを先に取得
+    ===================================== */
+
+    const savedWikiId =
+        localStorage.getItem(
+            "wikihub_currentWiki"
+        );
+
+
+    if(savedWikiId){
+
+        wiki = wikis.find(
+
+            w =>
+                String(w.id) ===
+                String(savedWikiId)
+
         );
 
     }
 
 
-    /*
-       ---------------------------------------
-       旧 wikis[].pages 方式
-       ---------------------------------------
-    */
+    /* =====================================
+       ④ Wikiの中から記事を探す
+    ===================================== */
+
+    if(wiki && Array.isArray(wiki.pages)){
+
+        page = wiki.pages.find(
+
+            p =>
+                String(p.id) ===
+                String(currentPageId)
+
+        );
+
+    }
+
+
+    /* =====================================
+       ⑤ Wikiが分からない場合
+          全Wikiから検索
+    ===================================== */
 
     if(!page){
-
-        const wikis = JSON.parse(
-
-            localStorage.getItem(
-                "wikihub_wikis"
-            )
-
-        ) || [];
-
 
         for(const w of wikis){
 
@@ -162,23 +203,48 @@ function loadArticle(){
     }
 
 
-    /*
-       ---------------------------------------
-       wiki.js の wikis 方式
-       ---------------------------------------
-    */
+    /* =====================================
+       ⑥ 新しい pages 保存方式にも対応
+    ===================================== */
 
-    if(
-        !page &&
-        typeof getPage === "function"
-    ){
+    if(!page){
 
-        page = getPage(
-            currentPageId
+        const pages = JSON.parse(
+
+            localStorage.getItem(
+                "wikihub_pages"
+            )
+
+        ) || [];
+
+
+        page = pages.find(
+
+            p =>
+                String(p.id) ===
+                String(currentPageId)
+
         );
+
+
+        if(page){
+
+            wiki = wikis.find(
+
+                w =>
+                    String(w.id) ===
+                    String(page.wikiId)
+
+            );
+
+        }
 
     }
 
+
+    /* =====================================
+       ⑦ 見つからない
+    ===================================== */
 
     if(!page){
 
@@ -191,42 +257,43 @@ function loadArticle(){
     }
 
 
+    /* =====================================
+       現在情報を保存
+    ===================================== */
+
     currentPage = page;
     currentWiki = wiki;
 
 
-    /*
-       現在の記事を保存
+    /* =====================================
+       currentWikiも確実に保存
+    ===================================== */
 
-       既存システムとの互換
-    */
-
-    localStorage.setItem(
-
-        "wikihub_currentPage",
-
-        page.id
-
-    );
-
-
-    if(wiki){
+    if(currentWiki){
 
         localStorage.setItem(
 
             "wikihub_currentWiki",
 
-            wiki.id
+            currentWiki.id
 
         );
 
     }
 
 
+    localStorage.setItem(
+
+        "wikihub_currentPage",
+
+        currentPage.id
+
+    );
+
+
     renderPage();
 
 }
-
 
 /* =========================================
    Wiki取得
