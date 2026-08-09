@@ -1,199 +1,1414 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
 
-<title>記事編集 - WikiHub</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/wiki.css">
+    <title>WikiHub - エディター</title>
+
+    <link
+        rel="stylesheet"
+        href="main.css"
+    >
+
+    <style>
+
+        /* ========================================
+           WikiHub Editor
+        ======================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Noto Sans JP",
+                sans-serif;
+
+            background: #f5f6f8;
+
+            color: #222;
+
+        }
+
+
+        /* ========================================
+           ヘッダー
+        ======================================== */
+
+        .editor-header {
+
+            height: 68px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 20px;
+
+            padding: 0 24px;
+
+            background: #202122;
+
+            color: white;
+
+            border-bottom:
+                1px solid #444;
+
+        }
+
+
+        .editor-logo {
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            white-space: nowrap;
+
+        }
+
+
+        .editor-logo a {
+
+            color: white;
+
+            text-decoration: none;
+
+        }
+
+
+        .editor-search {
+
+            flex: 1;
+
+            max-width: 700px;
+
+            margin: auto;
+
+        }
+
+
+        .editor-search input {
+
+            width: 100%;
+
+            height: 42px;
+
+            border-radius: 8px;
+
+            border: none;
+
+            padding:
+                0 15px;
+
+            font-size: 15px;
+
+        }
+
+
+        .header-buttons {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+
+        .header-buttons button {
+
+            border: none;
+
+            border-radius: 7px;
+
+            background: #3366cc;
+
+            color: white;
+
+            padding:
+                10px 16px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+
+        .header-buttons button:hover {
+
+            background: #2855aa;
+
+        }
+
+
+        /* ========================================
+           全体
+        ======================================== */
+
+        .editor-layout {
+
+            display: grid;
+
+            grid-template-columns:
+                250px
+                minmax(400px, 1fr)
+                320px;
+
+            gap: 18px;
+
+            padding: 20px;
+
+            max-width: 1800px;
+
+            margin: auto;
+
+        }
+
+
+        /* ========================================
+           左サイドバー
+        ======================================== */
+
+        .editor-sidebar {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 15px;
+
+        }
+
+
+        .panel {
+
+            background: white;
+
+            border:
+                1px solid #ccd0d5;
+
+            border-radius: 10px;
+
+            padding: 16px;
+
+            box-shadow:
+                0 1px 3px
+                rgba(0,0,0,0.05);
+
+        }
+
+
+        .panel h3 {
+
+            margin:
+                0 0 12px;
+
+            color: #2867c7;
+
+            font-size: 17px;
+
+        }
+
+
+        .panel button {
+
+            width: 100%;
+
+            margin-bottom: 7px;
+
+            padding: 9px;
+
+            border:
+                1px solid #aaa;
+
+            border-radius: 6px;
+
+            background: #fff;
+
+            cursor: pointer;
+
+            text-align: left;
+
+        }
+
+
+        .panel button:hover {
+
+            background: #eef4ff;
+
+        }
+
+
+        /* ========================================
+           メインエディター
+        ======================================== */
+
+        .editor-main {
+
+            min-width: 0;
+
+        }
+
+
+        .editor-card {
+
+            background: white;
+
+            border:
+                1px solid #ccd0d5;
+
+            border-radius: 10px;
+
+            padding: 22px;
+
+        }
+
+
+        #editorTitle {
+
+            margin:
+                0 0 20px;
+
+            color: #2867c7;
+
+            font-size: 27px;
+
+        }
+
+
+        /* ========================================
+           入力フォーム
+        ======================================== */
+
+        .form-group {
+
+            margin-bottom: 16px;
+
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-weight: bold;
+
+        }
+
+
+        .form-group input {
+
+            width: 100%;
+
+            height: 42px;
+
+            border:
+                1px solid #aaa;
+
+            border-radius: 6px;
+
+            padding:
+                8px 12px;
+
+            font-size: 15px;
+
+        }
+
+
+        /* ========================================
+           ツールバー
+        ======================================== */
+
+        .editor-toolbar {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 6px;
+
+            padding: 10px;
+
+            background: #f0f2f5;
+
+            border:
+                1px solid #ccc;
+
+            border-bottom: none;
+
+            border-radius:
+                7px 7px 0 0;
+
+        }
+
+
+        .editor-toolbar button {
+
+            padding:
+                7px 10px;
+
+            border:
+                1px solid #aaa;
+
+            border-radius: 5px;
+
+            background: white;
+
+            cursor: pointer;
+
+        }
+
+
+        .editor-toolbar button:hover {
+
+            background: #e7efff;
+
+        }
+
+
+        /* ========================================
+           本文
+        ======================================== */
+
+        #editor {
+
+            display: block;
+
+            width: 100%;
+
+            min-height: 520px;
+
+            resize: vertical;
+
+            padding: 15px;
+
+            border:
+                1px solid #aaa;
+
+            border-radius:
+                0 0 7px 7px;
+
+            font-family:
+                Consolas,
+                "Courier New",
+                monospace;
+
+            font-size: 15px;
+
+            line-height: 1.65;
+
+            outline: none;
+
+        }
+
+
+        #editor:focus {
+
+            border-color:
+                #3366cc;
+
+            box-shadow:
+                0 0 0 2px
+                rgba(51,102,204,0.12);
+
+        }
+
+
+        /* ========================================
+           保存ボタン
+        ======================================== */
+
+        .editor-actions {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 8px;
+
+            margin-top: 15px;
+
+        }
+
+
+        .editor-actions button {
+
+            padding:
+                10px 18px;
+
+            border: none;
+
+            border-radius: 7px;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+        }
+
+
+        #savePage {
+
+            background: #2870d8;
+
+            color: white;
+
+        }
+
+
+        #savePage:hover {
+
+            background: #1e5ebc;
+
+        }
+
+
+        .danger-button {
+
+            background: #dc3545;
+
+            color: white;
+
+        }
+
+
+        .secondary-button {
+
+            background: #e9ecef;
+
+            color: #222;
+
+        }
+
+
+        /* ========================================
+           エディター情報
+        ======================================== */
+
+        #editorInfo {
+
+            margin-top: 10px;
+
+            color: #666;
+
+            font-size: 13px;
+
+        }
+
+
+        /* ========================================
+           プレビュー
+        ======================================== */
+
+        .preview-card {
+
+            margin-top: 18px;
+
+            background: white;
+
+            border:
+                1px solid #ccd0d5;
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+        }
+
+
+        .preview-card h2 {
+
+            margin-top: 0;
+
+            color: #2867c7;
+
+        }
+
+
+        #preview {
+
+            min-height: 120px;
+
+            line-height: 1.7;
+
+            overflow-wrap: anywhere;
+
+        }
+
+
+        /* ========================================
+           右サイドバー
+        ======================================== */
+
+        .editor-right {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 15px;
+
+        }
+
+
+        .info-row {
+
+            padding:
+                8px 0;
+
+            border-bottom:
+                1px solid #eee;
+
+        }
+
+
+        .info-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        .info-label {
+
+            font-weight: bold;
+
+            color: #555;
+
+        }
+
+
+        /* ========================================
+           注意
+        ======================================== */
+
+        .drop-info {
+
+            padding: 12px;
+
+            background: #eef6ff;
+
+            border:
+                1px solid #b8d6ff;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+
+        }
+
+
+        /* ========================================
+           レスポンシブ
+        ======================================== */
+
+        @media
+        (max-width: 1100px) {
+
+            .editor-layout {
+
+                grid-template-columns:
+                    200px
+                    minmax(0, 1fr);
+
+            }
+
+            .editor-right {
+
+                grid-column:
+                    1 / -1;
+
+                display: grid;
+
+                grid-template-columns:
+                    repeat(
+                        auto-fit,
+                        minmax(220px, 1fr)
+                    );
+
+            }
+
+        }
+
+
+        @media
+        (max-width: 760px) {
+
+            .editor-header {
+
+                height: auto;
+
+                min-height: 60px;
+
+                flex-wrap: wrap;
+
+                padding: 10px;
+
+            }
+
+
+            .editor-search {
+
+                order: 3;
+
+                flex-basis: 100%;
+
+            }
+
+
+            .editor-layout {
+
+                display: block;
+
+                padding: 10px;
+
+            }
+
+
+            .editor-sidebar,
+            .editor-right {
+
+                margin-bottom: 15px;
+
+            }
+
+
+            .editor-sidebar {
+
+                display: grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+            }
+
+
+            #editor {
+
+                min-height: 400px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
+
+
 <body>
 
-<header id="topBar">
 
-<div class="logo">
-✏ WikiHub Editor
-</div>
+<!-- ========================================
+     ヘッダー
+======================================== -->
 
-<div class="accountArea">
+<header class="editor-header">
 
-<button id="savePage">
-💾 保存
-</button>
+    <div class="editor-logo">
 
-<button id="previewButton">
-👀 プレビュー
-</button>
+        <a href="index.html">
 
-<button id="historyButton">
-📜 履歴
-</button>
+            🌐 WikiHub
 
-<button onclick="location.href='wiki.html'">
-⬅ 戻る
-</button>
+        </a>
 
-</div>
+    </div>
+
+
+    <div class="editor-search">
+
+        <input
+            type="search"
+            id="editorSearch"
+            placeholder="Wiki・記事を検索..."
+        >
+
+    </div>
+
+
+    <div class="header-buttons">
+
+        <button
+            type="button"
+            onclick="location.href='wiki.html'"
+        >
+            📚 記事一覧
+        </button>
+
+
+        <button
+            type="button"
+            onclick="location.href='index.html'"
+        >
+            🏠 ホーム
+        </button>
+
+    </div>
 
 </header>
 
-<main>
 
-<aside id="leftMenu">
 
-<div class="panel">
+<!-- ========================================
+     レイアウト
+======================================== -->
 
-<h2>
+<div class="editor-layout">
 
-📄 ページ情報
 
-</h2>
+    <!-- ====================================
+         左
+    ===================================== -->
 
-<p>
+    <aside class="editor-sidebar">
 
-タイトル
 
-</p>
+        <div class="panel">
 
-<input
-id="pageTitleInput"
-type="text">
+            <h3>
+                📝 編集
+            </h3>
 
-<hr>
 
-<p>
+            <button
+                type="button"
+                onclick="savePage()"
+            >
+                💾 保存
+            </button>
 
-カテゴリ
 
-</p>
+            <button
+                type="button"
+                onclick="createNewPage()"
+            >
+                ➕ 新しい記事
+            </button>
 
-<input
-id="pageCategory"
-type="text"
-placeholder="ゲーム">
 
-<hr>
+            <button
+                type="button"
+                onclick="openHistory()"
+            >
+                📜 履歴
+            </button>
 
-<p>
 
-タグ
+            <button
+                type="button"
+                onclick="restoreRecovery()"
+            >
+                ♻️ 復元
+            </button>
 
-</p>
 
-<input
-id="pageTags"
-type="text"
-placeholder="Minecraft,Java">
+            <button
+                type="button"
+                onclick="deleteCurrentPage()"
+                class="danger-button"
+            >
+                🗑️ 記事を削除
+            </button>
+
+        </div>
+
+
+
+        <div class="panel">
+
+            <h3>
+                🧰 ツール
+            </h3>
+
+
+            <button
+                type="button"
+                onclick="document.execCommand('undo')"
+            >
+                ↩️ Undo
+            </button>
+
+
+            <button
+                type="button"
+                onclick="document.execCommand('redo')"
+            >
+                ↪️ Redo
+            </button>
+
+
+            <button
+                type="button"
+                id="previewButton"
+            >
+                👁️ プレビュー切替
+            </button>
+
+        </div>
+
+
+
+        <div class="panel">
+
+            <h3>
+                📦 テンプレート
+            </h3>
+
+
+            <button
+                type="button"
+                onclick="insertTemplate('infobox')"
+            >
+                📋 Infobox
+            </button>
+
+
+            <button
+                type="button"
+                onclick="insertTemplate('quote')"
+            >
+                💬 引用
+            </button>
+
+
+            <button
+                type="button"
+                onclick="insertTemplate('code')"
+            >
+                💻 コード
+            </button>
+
+
+            <button
+                type="button"
+                onclick="insertTemplate('table')"
+            >
+                📊 表
+            </button>
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- ====================================
+         メイン
+    ===================================== -->
+
+    <main class="editor-main">
+
+
+        <div class="editor-card">
+
+
+            <h1 id="editorTitle">
+
+                ✏️ 記事を作成
+
+            </h1>
+
+
+            <!-- タイトル -->
+
+            <div class="form-group">
+
+                <label
+                    for="pageTitleInput"
+                >
+                    📄 記事タイトル
+                </label>
+
+
+                <input
+                    type="text"
+                    id="pageTitleInput"
+                    placeholder="記事のタイトルを入力..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+
+            <!-- カテゴリ -->
+
+            <div class="form-group">
+
+                <label
+                    for="pageCategory"
+                >
+                    📁 カテゴリ
+                </label>
+
+
+                <input
+                    type="text"
+                    id="pageCategory"
+                    placeholder="例：ゲーム、プログラミング、その他"
+                >
+
+            </div>
+
+
+
+            <!-- タグ -->
+
+            <div class="form-group">
+
+                <label
+                    for="pageTags"
+                >
+                    🏷️ タグ
+                </label>
+
+
+                <input
+                    type="text"
+                    id="pageTags"
+                    placeholder="例：WikiHub, HTML, JavaScript"
+                >
+
+            </div>
+
+
+
+            <!-- 本文 -->
+
+            <div class="form-group">
+
+                <label>
+                    📝 本文
+                </label>
+
+
+                <div class="editor-toolbar">
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('== 見出し ==')"
+                    >
+                        H
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('**太字**')"
+                    >
+                        太字
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('> 引用')"
+                    >
+                        引用
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('[[リンク]]')"
+                    >
+                        🔗 リンク
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('- リスト項目')"
+                    >
+                        • リスト
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('```\\nコード\\n```')"
+                    >
+                        💻 コード
+                    </button>
+
+
+                    <button
+                        type="button"
+                        onclick="insertText('----')"
+                    >
+                        ─ 線
+                    </button>
+
+
+                </div>
+
+
+                <textarea
+                    id="editor"
+                    spellcheck="false"
+                    placeholder="ここにWiki記事を書いてください..."
+                ></textarea>
+
+
+                <div id="editorInfo">
+
+                    文字数：0
+                    <br>
+                    行数：1
+
+                </div>
+
+            </div>
+
+
+
+            <!-- 保存操作 -->
+
+            <div class="editor-actions">
+
+
+                <button
+                    type="button"
+                    id="savePage"
+                >
+                    💾 保存
+                </button>
+
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    onclick="location.href='wiki.html'"
+                >
+                    ↩️ Wikiへ戻る
+                </button>
+
+
+                <button
+                    type="button"
+                    class="danger-button"
+                    onclick="deleteCurrentPage()"
+                >
+                    🗑️ 削除
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ====================================
+             プレビュー
+        ===================================== -->
+
+        <section class="preview-card">
+
+            <h2>
+                👁️ プレビュー
+            </h2>
+
+
+            <div id="preview">
+
+                プレビューがここに表示されます。
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ====================================
+         右
+    ===================================== -->
+
+    <aside class="editor-right">
+
+
+        <div class="panel">
+
+            <h3>
+                📄 記事情報
+            </h3>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    モード
+                </div>
+
+                <div id="editModeInfo">
+                    新規作成
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    記事ID
+                </div>
+
+                <div id="pageIdInfo">
+                    自動生成
+                </div>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <div class="info-label">
+                    編集者
+                </div>
+
+                <div id="editorUserInfo">
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="panel">
+
+            <h3>
+                🖼️ 画像
+            </h3>
+
+
+            <div class="drop-info">
+
+                画像ファイルを本文エリアへ
+                <strong>ドラッグ＆ドロップ</strong>
+                すると、WikiHubのローカルファイルとして保存できます。
+
+                <br><br>
+
+                対応：
+                PNG / JPG / GIF / WebP など
+
+            </div>
+
+        </div>
+
+
+
+        <div class="panel">
+
+            <h3>
+                💡 Wiki記法
+            </h3>
+
+
+            <div>
+
+                <p>
+                    <code>== 見出し ==</code>
+                </p>
+
+                <p>
+                    <code>**太字**</code>
+                </p>
+
+                <p>
+                    <code>[[リンク]]</code>
+                </p>
+
+                <p>
+                    <code>[[File:image.png]]</code>
+                </p>
+
+                <p>
+                    <code>&gt; 引用</code>
+                </p>
+
+                <p>
+                    <code>----</code>
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </aside>
+
 
 </div>
 
-<div class="panel">
 
-<h2>
 
-⚡ クイック挿入
+<!-- ========================================
+     スクリプト
+======================================== -->
 
-</h2>
+<script
+    src="wiki.js"
+></script>
 
-<button onclick="insertText('== 見出し ==')">
 
-見出し
+<script
+    src="editor.js"
+></script>
 
-</button>
 
-<br><br>
 
-<button onclick="insertText('[[リンク]]')">
+<script>
 
-内部リンク
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
 
-</button>
+        /*
+        編集モード表示
+        */
 
-<br><br>
+        const params =
+            new URLSearchParams(
+                location.search
+            );
 
-<button onclick="insertText('**太字**')">
 
-太字
+        const edit =
+            params.get("edit") === "1";
 
-</button>
 
-<br><br>
+        const id =
+            params.get("id");
 
-<button onclick="insertText('*斜体*')">
 
-斜体
+        const mode =
+            document.getElementById(
+                "editModeInfo"
+            );
 
-</button>
 
-<br><br>
+        const idInfo =
+            document.getElementById(
+                "pageIdInfo"
+            );
 
-<button onclick="insertText('{{Infobox}}')">
 
-Infobox
+        const userInfo =
+            document.getElementById(
+                "editorUserInfo"
+            );
 
-</button>
 
-</div>
+        if(mode){
 
-</aside>
+            mode.textContent =
+                edit
+                    ? "✏️ 既存記事を編集"
+                    : "🆕 新規作成";
 
-<section id="center">
+        }
 
-<textarea
-id="editor"
-spellcheck="false"
-placeholder="ここに記事を書きます。"></textarea>
 
-</section>
+        if(idInfo){
 
-<aside id="rightMenu">
+            idInfo.textContent =
+                id || "新規作成時に生成";
 
-<div class="panel">
+        }
 
-<h2>
 
-👀 プレビュー
+        /*
+        ユーザー名表示
+        */
 
-</h2>
+        if(
+            userInfo &&
+            typeof getSessionUsername ===
+            "function"
+        ){
 
-<div id="preview">
+            userInfo.textContent =
+                getSessionUsername();
 
-ここに表示されます
+        }
 
-</div>
+    }
+);
 
-</div>
 
-<div class="panel">
+/* ========================================
+   検索
+======================================== */
 
-<h2>
+const searchInput =
+    document.getElementById(
+        "editorSearch"
+    );
 
-📊 情報
 
-</h2>
+if(searchInput){
 
-<div id="editorInfo">
+    searchInput.addEventListener(
+        "keydown",
+        function(e){
 
-文字数：0
+            if(e.key !== "Enter"){
+                return;
+            }
 
-<br>
 
-行数：0
+            const query =
+                this.value.trim();
 
-</div>
 
-</div>
+            if(!query){
+                return;
+            }
 
-</aside>
 
-</main>
+            location.href =
+                "wiki.html?search=" +
+                encodeURIComponent(
+                    query
+                );
 
-<script src="js/wiki.js"></script>
-<script src="js/editor.js"></script>
+        }
+    );
+
+}
+
+</script>
+
 
 </body>
+
 </html>
