@@ -1818,9 +1818,8 @@ function setupEditProfileButton(){
              * 編集ページへ移動
              */
 
-            location.href =
-                "profile-edit.html";
-
+            location.href = "edit-profile.html";
+         
         }
     );
 
