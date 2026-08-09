@@ -8,10 +8,7 @@
 "use strict";
 
 
-let currentPage = null;
-let currentWiki = null;
 let currentPageId = null;
-
 
 /* =========================================
    起動
