@@ -218,6 +218,126 @@ function loadCurrentPage(){
 
 }
 
+/* =========================================
+   WikiHub トースト通知
+========================================= */
+
+function showToast(message, type = "info", duration = 2500){
+
+    /* 既存のToastがあれば削除 */
+
+    const oldToast =
+        document.getElementById("wikihub-toast");
+
+    if(oldToast){
+        oldToast.remove();
+    }
+
+
+    /* Toast作成 */
+
+    const toast =
+        document.createElement("div");
+
+    toast.id =
+        "wikihub-toast";
+
+    toast.textContent =
+        message;
+
+
+    /* 基本スタイル */
+
+    toast.style.position =
+        "fixed";
+
+    toast.style.left =
+        "50%";
+
+    toast.style.bottom =
+        "30px";
+
+    toast.style.transform =
+        "translateX(-50%)";
+
+    toast.style.zIndex =
+        "99999";
+
+    toast.style.padding =
+        "12px 22px";
+
+    toast.style.borderRadius =
+        "10px";
+
+    toast.style.fontSize =
+        "15px";
+
+    toast.style.fontWeight =
+        "bold";
+
+    toast.style.boxShadow =
+        "0 4px 15px rgba(0,0,0,0.25)";
+
+    toast.style.color =
+        "#fff";
+
+
+    /* 種類ごとの表示 */
+
+    if(type === "success"){
+
+        toast.style.background =
+            "#28a745";
+
+    }else if(type === "error"){
+
+        toast.style.background =
+            "#dc3545";
+
+    }else if(type === "warning"){
+
+        toast.style.background =
+            "#f0ad4e";
+
+    }else{
+
+        toast.style.background =
+            "#2870d8";
+
+    }
+
+
+    /* 画面へ追加 */
+
+    document.body.appendChild(
+        toast
+    );
+
+
+    /* 自動消去 */
+
+    setTimeout(() => {
+
+        if(toast){
+
+            toast.style.opacity =
+                "0";
+
+            toast.style.transition =
+                "opacity 0.3s";
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 300);
+
+        }
+
+    }, duration);
+
+}
+
 /*==============================
  エディター
 ==============================*/
