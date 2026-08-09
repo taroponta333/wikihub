@@ -1903,6 +1903,197 @@ function showLoadError(message){
 
 }
 
+/*==================================
+ 記事削除
+==================================*/
+
+function deletePage(pageId){
+
+    if(!pageId){
+
+        alert("削除する記事が指定されていません。");
+
+        return;
+
+    }
+
+
+    const wikiId =
+        localStorage.getItem(
+            "wikihub_currentWiki"
+        );
+
+
+    if(!wikiId){
+
+        alert("Wikiが選択されていません。");
+
+        return;
+
+    }
+
+
+    loadWikis();
+
+
+    const wiki =
+        wikis.find(
+            w =>
+                String(w.id) ===
+                String(wikiId)
+        );
+
+
+    if(!wiki){
+
+        alert("Wikiが見つかりません。");
+
+        return;
+
+    }
+
+
+    if(!Array.isArray(wiki.pages)){
+
+        alert("記事データが見つかりません。");
+
+        return;
+
+    }
+
+
+    const page =
+        wiki.pages.find(
+            p =>
+                String(p.id) ===
+                String(pageId)
+        );
+
+
+    if(!page){
+
+        alert("記事が見つかりません。");
+
+        return;
+
+    }
+
+
+    /*==============================
+      確認
+    ==============================*/
+
+    const result =
+        confirm(
+            `「${page.title || "無題の記事"}」を削除しますか？\n\n` +
+            "この操作は元に戻せません。"
+        );
+
+
+    if(!result){
+
+        return;
+
+    }
+
+
+    /*==============================
+      削除
+    ==============================*/
+
+    wiki.pages =
+        wiki.pages.filter(
+            p =>
+                String(p.id) !==
+                String(pageId)
+        );
+
+
+    /*==============================
+      統計更新
+    ==============================*/
+
+    if(!wiki.statistics){
+
+        wiki.statistics = {};
+
+    }
+
+
+    wiki.statistics.pages =
+        wiki.pages.length;
+
+
+    /*==============================
+      保存
+    ==============================*/
+
+    saveWikis();
+
+
+    /*==============================
+      現在記事を解除
+    ==============================*/
+
+    const currentPage =
+        localStorage.getItem(
+            "wikihub_currentPage"
+        );
+
+
+    if(
+        String(currentPage) ===
+        String(pageId)
+    ){
+
+        localStorage.removeItem(
+            "wikihub_currentPage"
+        );
+
+    }
+
+
+    /*==============================
+      完了
+    ==============================*/
+
+    if(
+        typeof showToast ===
+        "function"
+    ){
+
+        showToast(
+            "記事を削除しました。",
+            "success"
+        );
+
+    }else{
+
+        alert(
+            "記事を削除しました。"
+        );
+
+    }
+
+
+    /*==============================
+      一覧更新
+    ==============================*/
+
+    if(
+        typeof renderPageList ===
+        "function"
+    ){
+
+        renderPageList();
+
+    }else{
+
+        location.reload();
+
+    }
+
+}
 
 /*========================================
  デバッグ用
