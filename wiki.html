@@ -1,248 +1,384 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>WikiHub</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>記事 - WikiHub</title>
 
 <link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/wiki.css">
 
 </head>
+
 <body>
+
+<!-- =================================
+     Header
+================================= -->
 
 <header id="topBar">
 
-<div class="logo">
+    <div class="logo">
+        🌐 WikiHub
+    </div>
 
-🌐 WikiHub
+    <div class="searchArea">
 
-</div>
+        <input
+            type="text"
+            id="searchBox"
+            placeholder="Wiki・記事を検索..."
+        >
 
-<div class="searchArea">
+        <button id="searchButton">
+            🔍
+        </button>
 
-<input
-type="text"
-id="pageSearch"
-placeholder="このWikiを検索">
+    </div>
 
-<button id="searchButton">
+    <div class="accountArea">
 
-🔍
+        <button onclick="goWikiPages()">
+            📚 記事一覧
+        </button>
 
-</button>
+        <button onclick="goHome()">
+            🏠 ホーム
+        </button>
 
-</div>
-
-<div class="accountArea">
-
-<button id="editPage">
-
-✏ 編集
-
-</button>
-
-<button id="historyPage">
-
-📜 履歴
-
-</button>
-
-<button onclick="location.href='explorer.html'">
-
-📁 Wiki一覧
-
-</button>
-
-</div>
+    </div>
 
 </header>
 
-<main>
 
-<!-- 左サイド -->
+<!-- =================================
+     Main
+================================= -->
 
-<aside id="leftMenu">
+<main id="app">
 
-<div class="panel">
 
-<h2>
+    <!-- =================================
+         Left Menu
+    ================================= -->
 
-📚 ページ
+    <aside id="leftMenu">
 
-</h2>
+        <div class="panel">
 
-<div id="pageList">
+            <div class="panel-header">
+                📚 Wiki
+            </div>
 
-<!-- JS -->
+            <div class="panel-body">
 
-</div>
+                <h2 id="wikiTitle">
+                    読み込み中...
+                </h2>
 
-</div>
+                <p id="wikiDescription">
+                    ---
+                </p>
 
-<div class="panel">
+                <hr>
 
-<h2>
+                <button
+                    class="btn btn-primary w100"
+                    onclick="goWikiPages()">
 
-📂 カテゴリ
+                    📄 記事一覧
 
-</h2>
+                </button>
 
-<div id="categoryList">
+                <button
+                    class="btn btn-secondary w100 mt10"
+                    onclick="createNewPage()">
 
-ゲーム
+                    ➕ 新しい記事
 
-</div>
+                </button>
 
-</div>
+            </div>
 
-<div class="panel">
+        </div>
 
-<h2>
 
-⭐ お気に入り
+        <!-- 記事情報 -->
 
-</h2>
+        <div class="panel mt20">
 
-<div id="favoriteList">
+            <div class="panel-header">
+                📄 記事情報
+            </div>
 
-なし
+            <div class="panel-body">
 
-</div>
+                <p>
+                    カテゴリ
+                </p>
 
-</div>
+                <div id="pageCategory">
+                    ---
+                </div>
 
-</aside>
+                <hr>
 
-<!-- 中央 -->
+                <p>
+                    タグ
+                </p>
 
-<section id="center">
+                <div id="pageTags">
+                    ---
+                </div>
 
-<div class="welcome">
+            </div>
 
-<h1 id="pageTitle">
+        </div>
 
-読み込み中...
+    </aside>
 
-</h1>
 
-<p id="pageInfo">
+    <!-- =================================
+         Center
+    ================================= -->
 
-作成者：
-更新：
+    <section id="center">
 
-</p>
 
-</div>
+        <!-- Article Header -->
 
-<div class="panel">
+        <div class="welcome">
 
-<div id="pageContent">
+            <div
+                id="pageIcon"
+                style="
+                    font-size:48px;
+                    margin-bottom:10px;
+                ">
+                📄
+            </div>
 
-記事を読み込んでいます...
+            <h1 id="pageTitle">
+                読み込み中...
+            </h1>
 
-</div>
+            <p id="pageInfo">
+                読み込み中...
+            </p>
 
-</div>
+            <div
+                id="pageActions"
+                style="
+                    display:flex;
+                    gap:10px;
+                    flex-wrap:wrap;
+                    margin-top:15px;
+                ">
 
-</section>
+                <button
+                    class="btn btn-primary"
+                    onclick="editCurrentPage()">
 
-<!-- 右 -->
+                    ✏️ 編集
 
-<aside id="rightMenu">
+                </button>
 
-<div class="panel">
+                <button
+                    class="btn btn-secondary"
+                    onclick="showHistory()">
 
-<h2>
+                    📜 履歴
 
-📑 目次
+                </button>
 
-</h2>
+                <button
+                    class="btn btn-secondary"
+                    onclick="toggleFavorite()">
 
-<div id="toc">
+                    ⭐ お気に入り
 
-読み込み中...
+                </button>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-<div class="panel">
 
-<h2>
+        <!-- Article -->
 
-📰 最近更新
+        <div class="panel">
 
-</h2>
+            <div class="panel-body">
 
-<div id="recentPages">
+                <article
+                    id="pageContent"
+                    class="article-content">
 
-読み込み中...
+                    記事を読み込んでいます...
 
-</div>
+                </article>
 
-</div>
+            </div>
 
-<div class="panel">
+        </div>
 
-<h2>
 
-📊 Wiki情報
+        <!-- Comments -->
 
-</h2>
+        <div class="panel mt20">
 
-<ul>
+            <div class="panel-header">
+                💬 コメント
+            </div>
 
-<li>
+            <div class="panel-body">
 
-記事数：
-<span id="wikiPages">
+                <div id="comments">
 
-0
+                    <div class="empty">
+                        コメントはまだありません。
+                    </div>
 
-</span>
+                </div>
 
-</li>
 
-<li>
+                <div
+                    id="commentForm"
+                    style="margin-top:20px;">
 
-メンバー：
-<span id="wikiMembers">
+                    <textarea
+                        id="commentInput"
+                        class="textarea"
+                        style="min-height:100px;"
+                        placeholder="この記事についてコメント...">
+                    </textarea>
 
-0
+                    <button
+                        class="btn btn-primary mt10"
+                        onclick="addComment()">
 
-</span>
+                        💬 コメント投稿
 
-</li>
+                    </button>
 
-<li>
+                </div>
 
-カテゴリー：
-<span id="wikiCategories">
+            </div>
 
-0
+        </div>
 
-</span>
+    </section>
 
-</li>
 
-</ul>
+    <!-- =================================
+         Right Menu
+    ================================= -->
 
-</div>
+    <aside id="rightMenu">
 
-</aside>
+
+        <!-- TOC -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+                📑 目次
+            </div>
+
+            <div
+                class="panel-body"
+                id="toc">
+
+                目次を生成しています...
+
+            </div>
+
+        </div>
+
+
+        <!-- Recent -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+                📰 最近更新
+            </div>
+
+            <div
+                class="panel-body"
+                id="recentPages">
+
+                読み込み中...
+
+            </div>
+
+        </div>
+
+
+        <!-- Wiki Stats -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+                📊 Wiki情報
+            </div>
+
+            <div class="panel-body">
+
+                <p>
+                    記事数：
+                    <strong id="wikiPages">
+                        0
+                    </strong>
+                </p>
+
+                <p>
+                    閲覧数：
+                    <strong id="pageViews">
+                        0
+                    </strong>
+                </p>
+
+                <p>
+                    ⭐：
+                    <strong id="pageStars">
+                        0
+                    </strong>
+                </p>
+
+            </div>
+
+        </div>
+
+    </aside>
 
 </main>
 
+
+<!-- =================================
+     Footer
+================================= -->
+
 <footer>
 
-WikiHub ©2026
+    WikiHub © 2026
 
 </footer>
 
+
+<!-- =================================
+     Scripts
+================================= -->
+
 <script src="js/wiki.js"></script>
 
+<script src="js/page-view.js"></script>
+
 </body>
+
 </html>
