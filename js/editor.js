@@ -352,20 +352,193 @@ function createNewPage(){
 /*========================================
  削除
 ========================================*/
+/*==================================
+ 記事削除
+ Editor専用
+==================================*/
+
 function deleteCurrentPage(){
-    if(!confirm("このページを削除しますか？"))return;
+
+    const pageId =
+        localStorage.getItem(
+            "wikihub_currentPage"
+        );
+
+    const wikiId =
+        localStorage.getItem(
+            "wikihub_currentWiki"
+        );
+
+
+    if(!pageId){
+
+        alert(
+            "削除する記事が選択されていません。"
+        );
+
+        return;
+
+    }
+
+
+    if(!wikiId){
+
+        alert(
+            "Wikiが選択されていません。"
+        );
+
+        return;
+
+    }
+
+
     loadWikis();
-    const wiki=wikis.find(w=>String(w.id)===String(localStorage.getItem("wikihub_currentWiki")));
-    if(!wiki)return;
-    const id=localStorage.getItem("wikihub_currentPage");
-    wiki.pages=(wiki.pages||[]).filter(p=>String(p.id)!==String(id));
-    if(!wiki.statistics)wiki.statistics={pages:0,files:0,edits:0,members:1};
-    wiki.statistics.pages=wiki.pages.length;
+
+
+    const wiki =
+        wikis.find(
+            w =>
+                String(w.id) ===
+                String(wikiId)
+        );
+
+
+    if(!wiki){
+
+        alert(
+            "Wikiが見つかりません。"
+        );
+
+        return;
+
+    }
+
+
+    if(!Array.isArray(wiki.pages)){
+
+        alert(
+            "記事データがありません。"
+        );
+
+        return;
+
+    }
+
+
+    const page =
+        wiki.pages.find(
+            p =>
+                String(p.id) ===
+                String(pageId)
+        );
+
+
+    if(!page){
+
+        alert(
+            "記事が見つかりません。"
+        );
+
+        return;
+
+    }
+
+
+    const title =
+        page.title ||
+        "無題の記事";
+
+
+    if(
+        !confirm(
+            `「${title}」を削除しますか？\n\n` +
+            "この操作は元に戻せません。"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    /* 記事削除 */
+
+    wiki.pages =
+        wiki.pages.filter(
+            p =>
+                String(p.id) !==
+                String(pageId)
+        );
+
+
+    /* 統計更新 */
+
+    if(!wiki.statistics){
+
+        wiki.statistics = {};
+
+    }
+
+
+    wiki.statistics.pages =
+        wiki.pages.length;
+
+
+    /* 保存 */
+
     saveWikis();
-    localStorage.removeItem("wikihub_currentPage");
-    location.href="wiki.html";
+
+
+    /* 現在記事を解除 */
+
+    localStorage.removeItem(
+        "wikihub_currentPage"
+    );
+
+
+    /* 完了 */
+
+    alert(
+        "記事を削除しました。"
+    );
+
+
+    /* 記事一覧へ */
+
+    location.href =
+        "wiki-pages.html";
+
 }
 
+
+/*==================================
+ 削除ボタン接続
+==================================*/
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        const button =
+            document.getElementById(
+                "deletePage"
+            );
+
+
+        if(!button){
+
+            return;
+
+        }
+
+
+        button.addEventListener(
+            "click",
+            deleteCurrentPage
+        );
+
+    }
+);
 /*========================================
  履歴
 ========================================*/
