@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>WikiHub - タグ</title>
+
+    <link
+        rel="stylesheet"
+        href="css/wiki.css"
+    >
+
+</head>
+
+
+<body>
+
+    <header class="wiki-header">
+
+        <div class="wiki-header-inner">
+
+            <a
+                href="index.html"
+                class="wiki-logo"
+            >
+                📚 WikiHub
+            </a>
+
+            <nav class="wiki-nav">
+
+                <a href="index.html">
+                    🏠 ホーム
+                </a>
+
+                <a href="wiki-pages.html">
+                    📄 記事一覧
+                </a>
+
+                <a href="wiki-tag.html">
+                    🏷️ タグ
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="wiki-container">
+
+        <!-- タイトル -->
+
+        <section class="wiki-page-header">
+
+            <h1 id="tagTitle">
+                🏷️ タグ一覧
+            </h1>
+
+            <p id="tagDescription">
+                WikiHubの記事をタグから探せます。
+            </p>
+
+        </section>
+
+
+        <!-- タグ一覧 -->
+
+        <section
+            id="tagListSection"
+            class="wiki-section"
+        >
+
+            <div
+                id="tagList"
+                class="tag-list"
+            >
+
+                <div class="loading">
+                    タグを読み込み中...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- タグの記事 -->
+
+        <section
+            id="tagArticlesSection"
+            class="wiki-section"
+            hidden
+        >
+
+            <div
+                id="tagArticles"
+            >
+
+                <div class="loading">
+                    記事を読み込み中...
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <script src="js/wiki.js"></script>
+
+    <script src="js/wiki-tag.js"></script>
+
+</body>
+
+</html>
