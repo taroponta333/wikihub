@@ -1260,3 +1260,77 @@ function searchPages(
     );
 
 }
+
+/*===============
+tag
+=================*/
+
+function renderPageTags(page) {
+
+    const container =
+        document.getElementById(
+            "pageTagsDisplay"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    let tags = [];
+
+    if (Array.isArray(page.tags)) {
+
+        tags = page.tags;
+
+    } else if (
+        typeof page.tags === "string"
+    ) {
+
+        tags =
+            page.tags
+                .split(",")
+                .map(tag => tag.trim())
+                .filter(Boolean);
+
+    }
+
+    if (tags.length === 0) {
+
+        return;
+
+    }
+
+    const label =
+        document.createElement("span");
+
+    label.className =
+        "page-tags-label";
+
+    label.textContent =
+        "🏷️";
+
+    container.appendChild(label);
+
+
+    tags.forEach(tag => {
+
+        const link =
+            document.createElement("a");
+
+        link.className =
+            "wiki-tag-small";
+
+        link.textContent =
+            tag;
+
+        link.href =
+            "wiki-tag.html?tag=" +
+            encodeURIComponent(tag);
+
+        container.appendChild(link);
+
+    });
+
+}
