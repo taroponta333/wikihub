@@ -352,17 +352,34 @@ function createNewPage(){
 /*========================================
  削除
 ========================================*/
-/*==================================
+
+/*========================================
  記事削除
  Editor専用
-==================================*/
+========================================*/
 
 function deleteCurrentPage(){
 
+    /*
+     * 編集URLのIDを最優先
+     * editor.html?edit=1&id=xxxxx
+     */
+
+    const urlParams =
+        new URLSearchParams(
+            location.search
+        );
+
+    const urlPageId =
+        urlParams.get("id");
+
+
     const pageId =
+        urlPageId ||
         localStorage.getItem(
             "wikihub_currentPage"
         );
+
 
     const wikiId =
         localStorage.getItem(
@@ -385,6 +402,34 @@ function deleteCurrentPage(){
 
         alert(
             "Wikiが選択されていません。"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        typeof loadWikis !==
+        "function"
+    ){
+
+        alert(
+            "Wikiデータを読み込めません。"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        typeof saveWikis !==
+        "function"
+    ){
+
+        alert(
+            "Wikiデータを保存できません。"
         );
 
         return;
@@ -439,6 +484,16 @@ function deleteCurrentPage(){
             "記事が見つかりません。"
         );
 
+        console.log(
+            "削除対象ID:",
+            pageId
+        );
+
+        console.log(
+            "現在のWiki:",
+            wiki
+        );
+
         return;
 
     }
@@ -449,19 +504,27 @@ function deleteCurrentPage(){
         "無題の記事";
 
 
-    if(
-        !confirm(
+    /*
+     * 最終確認
+     */
+
+    const confirmed =
+        window.confirm(
             `「${title}」を削除しますか？\n\n` +
             "この操作は元に戻せません。"
-        )
-    ){
+        );
+
+
+    if(!confirmed){
 
         return;
 
     }
 
 
-    /* 記事削除 */
+    /*
+     * 記事削除
+     */
 
     wiki.pages =
         wiki.pages.filter(
@@ -471,11 +534,20 @@ function deleteCurrentPage(){
         );
 
 
-    /* 統計更新 */
+    /*
+     * 統計
+     */
 
     if(!wiki.statistics){
 
-        wiki.statistics = {};
+        wiki.statistics = {
+
+            pages: 0,
+            files: 0,
+            edits: 0,
+            members: 1
+
+        };
 
     }
 
@@ -484,61 +556,56 @@ function deleteCurrentPage(){
         wiki.pages.length;
 
 
-    /* 保存 */
+    /*
+     * 保存
+     */
 
     saveWikis();
 
 
-    /* 現在記事を解除 */
+    /*
+     * 現在記事情報を削除
+     */
 
     localStorage.removeItem(
         "wikihub_currentPage"
     );
 
+    localStorage.removeItem(
+        "wikihub_editPage"
+    );
 
-    /* 完了 */
-
-    alert(
-        "記事を削除しました。"
+    localStorage.removeItem(
+        "wikihub_draft"
     );
 
 
-    /* 記事一覧へ */
+    /*
+     * 完了
+     */
 
-    location.href =
-        "wiki-pages.html";
+    showToast(
+        "記事を削除しました。",
+        "success"
+    );
+
+
+    /*
+     * 少し待って一覧へ
+     */
+
+    setTimeout(
+        function(){
+
+            location.href =
+                "wiki-pages.html";
+
+        },
+        500
+    );
 
 }
 
-
-/*==================================
- 削除ボタン接続
-==================================*/
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
-
-        const button =
-            document.getElementById(
-                "deletePage"
-            );
-
-
-        if(!button){
-
-            return;
-
-        }
-
-
-        button.addEventListener(
-            "click",
-            deleteCurrentPage
-        );
-
-    }
-);
 /*========================================
  履歴
 ========================================*/
